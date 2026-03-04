@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerUser } from '@/lib/supabase/get-user';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
     const user = await getServerUser(request);
     if (!user) {
@@ -14,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     const state = crypto.randomUUID();
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     cookieStore.set('instagram_oauth_state', state, { httpOnly: true, secure: false, maxAge: 600 });
 
     const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/connect/instagram/callback`;

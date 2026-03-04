@@ -3,6 +3,8 @@ import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
     const user = await getServerUser(request);
     if (!user) {
@@ -18,7 +20,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/accounts?error=youtube_denied', request.url));
     }
 
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     const savedState = cookieStore.get('youtube_oauth_state')?.value;
 
     if (!state || state !== savedState || !code) {

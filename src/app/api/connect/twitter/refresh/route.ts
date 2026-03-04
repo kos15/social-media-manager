@@ -3,6 +3,8 @@ import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { getPlatformCredential } from '@/lib/platform-credentials';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * POST /api/connect/twitter/refresh
  *

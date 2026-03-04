@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { getPlatformCredential } from '@/lib/platform-credentials';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/connect/twitter/callback
  *

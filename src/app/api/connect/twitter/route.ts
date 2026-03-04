@@ -4,6 +4,8 @@ import { generateCodeVerifier, generateCodeChallenge } from '@/lib/oauth-utils';
 import { getPlatformCredential } from '@/lib/platform-credentials';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/connect/twitter
  *
