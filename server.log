@@ -1,0 +1,958 @@
+
+> social-media-manager@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.14
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1989ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 994ms (208 modules)
+ GET /api/auth/providers 200 in 1580ms
+ GET /api/auth/providers 200 in 32ms
+ GET /api/auth/csrf 200 in 16ms
+ POST /api/auth/callback/credentials? 200 in 47ms
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 842ms (226 modules)
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 5.1s (1926 modules)
+ ✓ Compiled in 391ms (863 modules)
+ ○ Compiling /composer ...
+ ✓ Compiled /composer in 2.6s (2155 modules)
+ ○ Compiling /calendar ...
+ ✓ Compiled /calendar in 680ms (1481 modules)
+ ✓ Compiled /ai-studio in 211ms (1499 modules)
+ ✓ Compiled /analytics in 385ms (1852 modules)
+ ⨯ ./src/app/(dashboard)/accounts/page.tsx
+Error: 
+  [31mx[0m You're importing a component that needs useState. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
+  [31m|[0m Learn more: https://nextjs.org/docs/getting-started/react-essentials
+  [31m|[0m 
+  [31m|[0m 
+   ,-[[36;1;4m/Users/koustubhmishra/Antigravity/social-media manager/src/app/(dashboard)/accounts/page.tsx[0m:1:1]
+ [2m1[0m | import { useState } from "react";
+   : [31;1m         ^^^^^^^^[0m
+ [2m2[0m | import { useAccountStore } from "@/store/useAccountStore";
+ [2m3[0m | import { Twitter, Linkedin, Instagram, Youtube, ExternalLink, Unplug } from "lucide-react";
+ [2m4[0m | import { ConnectAccountModal } from "@/components/accounts/ConnectAccountModal";
+   `----
+
+Import trace for requested module:
+./src/app/(dashboard)/accounts/page.tsx
+ ○ Compiling /_not-found ...
+ ⨯ ./src/app/(dashboard)/accounts/page.tsx
+Error: 
+  [31mx[0m You're importing a component that needs useState. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
+  [31m|[0m Learn more: https://nextjs.org/docs/getting-started/react-essentials
+  [31m|[0m 
+  [31m|[0m 
+   ,-[[36;1;4m/Users/koustubhmishra/Antigravity/social-media manager/src/app/(dashboard)/accounts/page.tsx[0m:1:1]
+ [2m1[0m | import { useState } from "react";
+   : [31;1m         ^^^^^^^^[0m
+ [2m2[0m | import { useAccountStore } from "@/store/useAccountStore";
+ [2m3[0m | import { Twitter, Linkedin, Instagram, Youtube, ExternalLink, Unplug } from "lucide-react";
+ [2m4[0m | import { ConnectAccountModal } from "@/components/accounts/ConnectAccountModal";
+   `----
+
+Import trace for requested module:
+./src/app/(dashboard)/accounts/page.tsx
+ ⨯ ./src/app/(dashboard)/accounts/page.tsx
+Error: 
+  [31mx[0m You're importing a component that needs useState. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
+  [31m|[0m Learn more: https://nextjs.org/docs/getting-started/react-essentials
+  [31m|[0m 
+  [31m|[0m 
+   ,-[[36;1;4m/Users/koustubhmishra/Antigravity/social-media manager/src/app/(dashboard)/accounts/page.tsx[0m:1:1]
+ [2m1[0m | import { useState } from "react";
+   : [31;1m         ^^^^^^^^[0m
+ [2m2[0m | import { useAccountStore } from "@/store/useAccountStore";
+ [2m3[0m | import { Twitter, Linkedin, Instagram, Youtube, ExternalLink, Unplug } from "lucide-react";
+ [2m4[0m | import { ConnectAccountModal } from "@/components/accounts/ConnectAccountModal";
+   `----
+
+Import trace for requested module:
+./src/app/(dashboard)/accounts/page.tsx
+ GET /accounts 500 in 8ms
+ ✓ Compiled /_not-found in 883ms (2109 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /_next/static/webpack/d53379e6d9ce0cf0.webpack.hot-update.json 404 in 969ms
+ GET /dashboard 200 in 1119ms
+ ⨯ ./src/app/(dashboard)/accounts/page.tsx
+Error: 
+  [31mx[0m You're importing a component that needs useState. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
+  [31m|[0m Learn more: https://nextjs.org/docs/getting-started/react-essentials
+  [31m|[0m 
+  [31m|[0m 
+   ,-[[36;1;4m/Users/koustubhmishra/Antigravity/social-media manager/src/app/(dashboard)/accounts/page.tsx[0m:1:1]
+ [2m1[0m | import { useState } from "react";
+   : [31;1m         ^^^^^^^^[0m
+ [2m2[0m | import { useAccountStore } from "@/store/useAccountStore";
+ [2m3[0m | import { Twitter, Linkedin, Instagram, Youtube, ExternalLink, Unplug } from "lucide-react";
+ [2m4[0m | import { ConnectAccountModal } from "@/components/accounts/ConnectAccountModal";
+   `----
+
+Import trace for requested module:
+./src/app/(dashboard)/accounts/page.tsx
+ GET /accounts 500 in 374ms
+ ○ Compiling /accounts ...
+ GET /dashboard 500 in 11ms
+ GET /dashboard 500 in 14ms
+ GET /dashboard 500 in 16ms
+ GET /dashboard 500 in 12ms
+ GET /dashboard 500 in 25ms
+ GET /dashboard 500 in 10ms
+ GET /dashboard 500 in 28ms
+ GET /dashboard 500 in 8ms
+ ✓ Compiled /_not-found in 1043ms (2109 modules)
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /_next/static/webpack/d53379e6d9ce0cf0.webpack.hot-update.json 500 in 982ms
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /_next/static/webpack/d53379e6d9ce0cf0.webpack.hot-update.json 500 in 8ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ○ Compiling /accounts ...
+ ✓ Compiled /accounts in 670ms (2125 modules)
+ GET /dashboard 200 in 835ms
+ GET /accounts 200 in 834ms
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /_next/static/css/app/layout.css?v=1772629251644 500 in 27ms
+ GET /_next/static/css/app/layout.css?v=1772629251629 500 in 32ms
+ GET /_next/static/chunks/main-app.js?v=1772629251644 500 in 28ms
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /_next/static/chunks/main-app.js?v=1772629251629 500 in 40ms
+ GET /_next/static/chunks/app-pages-internals.js 500 in 35ms
+ GET /_next/static/chunks/app/(dashboard)/dashboard/page.js 500 in 35ms
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /_next/static/chunks/app/(dashboard)/layout.js 500 in 10ms
+ GET /_next/static/chunks/app-pages-internals.js 500 in 10ms
+ ⨯ Error: Cannot find module './379.js'
+Require stack:
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js
+- /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js
+- /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:55:36
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at __webpack_require__.f.require (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:198:28)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:162:22)
+    at /Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:3967
+    at Object.<anonymous> (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/_not-found/page.js:1:4013)
+    at Module._compile (node:internal/modules/cjs/loader:1469:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)
+    at Module.load (node:internal/modules/cjs/loader:1288:32)
+    at Module._load (node:internal/modules/cjs/loader:1104:12)
+    at Module.require (node:internal/modules/cjs/loader:1311:19)
+    at mod.require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:179:18)
+    at requirePage (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js:109:84)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:84
+    at async loadComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/next-server.js:709:36)
+    at async DevServer.findPageComponents (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderErrorToResponseImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2067:30)
+    at async pipe.req.req (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:2033:30)
+    at async DevServer.pipeImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/base-server.js:914:25)
+    at async /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:173:21)
+    at async handleRequest (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:365:24)
+    at async requestHandlerImpl (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js:374:13)
+    at async Server.requestListener (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/.next/server/app/(dashboard)/dashboard/page.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/require.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/load-components.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/build/utils.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/server/lib/start-server.js'
+  ]
+}
+ GET /_next/static/chunks/app/(dashboard)/layout.js 500 in 8ms
+ GET /dashboard 200 in 21ms
+ GET /dashboard 200 in 19ms
+ ✓ Compiled in 363ms (1204 modules)
+ ✓ Compiled in 282ms (1204 modules)
+ ✓ Compiled in 329ms (1202 modules)
+ ✓ Compiled in 463ms (1428 modules)
+ ✓ Compiled in 297ms (1202 modules)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+digest: "2089865994"
+TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+    at require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19799)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+    at require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19799)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458) {
+  page: '/dashboard'
+}
+ GET /dashboard 500 in 68ms
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+digest: "2089865994"
+TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+    at require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19799)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+    at require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19799)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458) {
+  page: '/dashboard'
+}
+ GET /dashboard 500 in 24ms
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+digest: "2089865994"
+TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+    at require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19799)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+    at require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19799)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458) {
+  page: '/dashboard'
+}
+ GET /dashboard 500 in 27ms
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+digest: "2089865994"
+TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+    at require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19799)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (/Users/koustubhmishra/Antigravity/social-media manager/.next/server/webpack-runtime.js:33:42)
+    at require (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:19799)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108279
+    at eo (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108464)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110693
+    at Object._fromJSON (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111249)
+    at JSON.parse (<anonymous>)
+    at eu (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108958)
+    at en (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108026)
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115168
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115185
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115218
+    at /Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115235
+    at t (/Users/koustubhmishra/Antigravity/social-media manager/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115458) {
+  page: '/dashboard'
+}
+ GET /dashboard 500 in 23ms
