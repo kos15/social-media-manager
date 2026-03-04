@@ -40,7 +40,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" }
             },
-            async authorize(credentials: Record<string, string> | undefined) {
+            async authorize(credentials: Partial<Record<"email" | "password", unknown>>) {
                 if (credentials?.email === 'admin@admin.com') {
                     return { id: '1', email: 'admin@admin.com', name: 'Admin User' };
                 }
