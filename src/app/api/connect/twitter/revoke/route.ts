@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { getPlatformCredential } from '@/lib/platform-credentials';
 
@@ -13,8 +13,8 @@ import { getPlatformCredential } from '@/lib/platform-credentials';
  * Params: token, client_id (public) or Basic auth (confidential)
  */
 export async function POST(request: NextRequest) {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const user = await getServerUser(request);
+    if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     try {
         const account = await prisma.socialAccount.findFirst({
-            where: { id: accountId, userId: session.user.id!, platform: 'TWITTER' },
+            where: { id: accountId, userId: user.id, platform: 'TWITTER' },
         });
 
         if (!account) {

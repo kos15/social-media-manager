@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const user = await getServerUser(request);
+    if (!user) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/accounts?error=youtube_denied', request.url));
     }
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const savedState = cookieStore.get('youtube_oauth_state')?.value;
 
     if (!state || state !== savedState || !code) {
@@ -28,9 +28,8 @@ export async function GET(request: NextRequest) {
     cookieStore.delete('youtube_oauth_state');
 
     try {
-        const callbackUrl = `${process.env.NEXTAUTH_URL}/api/connect/youtube/callback`;
+        const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/connect/youtube/callback`;
 
-        // Exchange code for tokens
         const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -48,13 +47,11 @@ export async function GET(request: NextRequest) {
             throw new Error('Failed to obtain Google access token');
         }
 
-        // Fetch Google user info
         const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
             headers: { Authorization: `Bearer ${tokens.access_token}` },
         });
         const googleUser = await userResponse.json();
 
-        // Optionally fetch YouTube channel name
         let channelName = googleUser.name;
         let channelId = googleUser.id;
         try {
@@ -68,7 +65,7 @@ export async function GET(request: NextRequest) {
                 channelId = ytData.items[0].id;
             }
         } catch {
-            // Fall back to Google profile if YouTube API fails
+            // Fall back to Google profile
         }
 
         await prisma.socialAccount.upsert({
@@ -80,7 +77,7 @@ export async function GET(request: NextRequest) {
                 refreshToken: tokens.refresh_token ?? null,
                 expiresAt: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000) : null,
                 status: 'ACTIVE',
-                userId: session.user.id!,
+                userId: user.id,
             },
             create: {
                 platform: 'YOUTUBE',
@@ -91,7 +88,7 @@ export async function GET(request: NextRequest) {
                 refreshToken: tokens.refresh_token ?? null,
                 expiresAt: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000) : null,
                 status: 'ACTIVE',
-                userId: session.user.id!,
+                userId: user.id,
             },
         });
 

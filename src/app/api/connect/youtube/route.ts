@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerUser } from '@/lib/supabase/get-user';
 import { cookies } from 'next/headers';
 
-export async function GET() {
-    const session = await auth();
-    if (!session?.user?.id) {
-        return NextResponse.redirect('/login');
+export async function GET(request: NextRequest) {
+    const user = await getServerUser(request);
+    if (!user) {
+        return NextResponse.redirect(new URL('/login', request.url));
     }
 
     const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -14,10 +14,10 @@ export async function GET() {
     }
 
     const state = crypto.randomUUID();
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.set('youtube_oauth_state', state, { httpOnly: true, secure: false, maxAge: 600 });
 
-    const callbackUrl = `${process.env.NEXTAUTH_URL}/api/connect/youtube/callback`;
+    const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/connect/youtube/callback`;
 
     const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     url.searchParams.set('client_id', clientId);

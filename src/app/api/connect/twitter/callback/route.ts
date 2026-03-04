@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { getPlatformCredential } from '@/lib/platform-credentials';
@@ -17,10 +17,10 @@ import { getPlatformCredential } from '@/lib/platform-credentials';
  * User lookup: GET https://api.x.com/2/users/me
  */
 export async function GET(request: NextRequest) {
-    const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
-    const session = await auth();
-    if (!session?.user?.id) {
+    const user = await getServerUser(request);
+    if (!user) {
         return NextResponse.redirect(new URL('/login', baseUrl));
     }
 
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
                 refreshToken: refreshToken ?? null,
                 expiresAt: expiresIn ? new Date(Date.now() + expiresIn * 1000) : null,
                 status: 'ACTIVE',
-                userId: session.user.id!,
+                userId: user.id,
             },
             create: {
                 platform: 'TWITTER',
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
                 refreshToken: refreshToken ?? null,
                 expiresAt: expiresIn ? new Date(Date.now() + expiresIn * 1000) : null,
                 status: 'ACTIVE',
-                userId: session.user.id!,
+                userId: user.id,
             },
         });
 

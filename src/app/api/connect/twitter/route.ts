@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerUser } from '@/lib/supabase/get-user';
 import { generateCodeVerifier, generateCodeChallenge } from '@/lib/oauth-utils';
 import { getPlatformCredential } from '@/lib/platform-credentials';
 import { cookies } from 'next/headers';
@@ -14,10 +14,10 @@ import { cookies } from 'next/headers';
  * Required params: response_type, client_id, redirect_uri, scope, state, code_challenge, code_challenge_method
  * Scopes: tweet.read users.read offline.access
  */
-export async function GET() {
-    const session = await auth();
-    if (!session?.user?.id) {
-        return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/login`);
+export async function GET(request: NextRequest) {
+    const user = await getServerUser(request);
+    if (!user) {
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/login`);
     }
 
     // Load credentials from DB first, then env fallback
@@ -50,7 +50,7 @@ export async function GET() {
         path: '/',
     });
 
-    const callbackUrl = `${process.env.NEXTAUTH_URL}/api/connect/twitter/callback`;
+    const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/connect/twitter/callback`;
 
     // Build X authorization URL — using https://x.com/i/oauth2/authorize (correct endpoint per docs)
     const url = new URL('https://x.com/i/oauth2/authorize');

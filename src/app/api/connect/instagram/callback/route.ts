@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const user = await getServerUser(request);
+    if (!user) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/accounts?error=instagram_denied', request.url));
     }
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const savedState = cookieStore.get('instagram_oauth_state')?.value;
 
     if (!state || state !== savedState || !code) {
@@ -28,9 +28,8 @@ export async function GET(request: NextRequest) {
     cookieStore.delete('instagram_oauth_state');
 
     try {
-        const callbackUrl = `${process.env.NEXTAUTH_URL}/api/connect/instagram/callback`;
+        const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/connect/instagram/callback`;
 
-        // Exchange code for short-lived token
         const formData = new FormData();
         formData.append('client_id', process.env.INSTAGRAM_CLIENT_ID!);
         formData.append('client_secret', process.env.INSTAGRAM_CLIENT_SECRET!);
@@ -48,14 +47,12 @@ export async function GET(request: NextRequest) {
             throw new Error('Failed to obtain Instagram access token');
         }
 
-        // Exchange short-lived for long-lived token (60 days)
         const longLivedResponse = await fetch(
             `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}&access_token=${shortToken.access_token}`
         );
         const longToken = await longLivedResponse.json();
         const accessToken = longToken.access_token ?? shortToken.access_token;
 
-        // Fetch user profile
         const userResponse = await fetch(
             `https://graph.instagram.com/me?fields=id,username,profile_picture_url&access_token=${accessToken}`
         );
@@ -68,9 +65,9 @@ export async function GET(request: NextRequest) {
                 profileImage: igUser.profile_picture_url,
                 accessToken,
                 refreshToken: null,
-                expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
+                expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
                 status: 'ACTIVE',
-                userId: session.user.id!,
+                userId: user.id,
             },
             create: {
                 platform: 'INSTAGRAM',
@@ -81,7 +78,7 @@ export async function GET(request: NextRequest) {
                 refreshToken: null,
                 expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
                 status: 'ACTIVE',
-                userId: session.user.id!,
+                userId: user.id,
             },
         });
 

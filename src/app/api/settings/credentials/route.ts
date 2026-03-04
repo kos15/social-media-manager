@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 
 type Platform = 'TWITTER' | 'LINKEDIN' | 'INSTAGRAM' | 'YOUTUBE';
 
-// GET - fetch all platform credentials (masks client_secret)
-export async function GET() {
-    const session = await auth();
-    if (!session?.user?.id) {
+export async function GET(request: NextRequest) {
+    const user = await getServerUser(request);
+    if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -16,7 +15,6 @@ export async function GET() {
             orderBy: { platform: 'asc' },
         });
 
-        // Mask the client secret — only expose last 4 chars
         const masked = creds.map((c: { platform: string; clientId: string; clientSecret: string; updatedAt: Date }) => ({
             platform: c.platform,
             clientId: c.clientId,
@@ -26,15 +24,14 @@ export async function GET() {
 
         return NextResponse.json(masked);
     } catch (error) {
-        console.error('Failed to fetch credentials (DB may not be configured):', error);
+        console.error('Failed to fetch credentials:', error);
         return NextResponse.json([]);
     }
 }
 
-// POST - save/update credentials for a platform
 export async function POST(request: NextRequest) {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const user = await getServerUser(request);
+    if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -56,7 +53,6 @@ export async function POST(request: NextRequest) {
             update: { clientId: clientId.trim(), clientSecret: clientSecret.trim() },
             create: { platform, clientId: clientId.trim(), clientSecret: clientSecret.trim() },
         });
-
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('Failed to save credentials:', error);
@@ -64,10 +60,9 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// DELETE - remove credentials for a platform
 export async function DELETE(request: NextRequest) {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const user = await getServerUser(request);
+    if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

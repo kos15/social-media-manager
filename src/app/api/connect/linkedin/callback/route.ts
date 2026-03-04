@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const user = await getServerUser(request);
+    if (!user) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/accounts?error=linkedin_denied', request.url));
     }
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const savedState = cookieStore.get('linkedin_oauth_state')?.value;
 
     if (!state || state !== savedState || !code) {
@@ -28,9 +28,8 @@ export async function GET(request: NextRequest) {
     cookieStore.delete('linkedin_oauth_state');
 
     try {
-        const callbackUrl = `${process.env.NEXTAUTH_URL}/api/connect/linkedin/callback`;
+        const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/connect/linkedin/callback`;
 
-        // Exchange code for token
         const tokenResponse = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -48,7 +47,6 @@ export async function GET(request: NextRequest) {
             throw new Error('Failed to obtain LinkedIn access token');
         }
 
-        // Fetch user profile via OpenID Connect
         const userResponse = await fetch('https://api.linkedin.com/v2/userinfo', {
             headers: { Authorization: `Bearer ${tokens.access_token}` },
         });
@@ -67,7 +65,7 @@ export async function GET(request: NextRequest) {
                 refreshToken: tokens.refresh_token ?? null,
                 expiresAt: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000) : null,
                 status: 'ACTIVE',
-                userId: session.user.id!,
+                userId: user.id,
             },
             create: {
                 platform: 'LINKEDIN',
@@ -78,7 +76,7 @@ export async function GET(request: NextRequest) {
                 refreshToken: tokens.refresh_token ?? null,
                 expiresAt: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000) : null,
                 status: 'ACTIVE',
-                userId: session.user.id!,
+                userId: user.id,
             },
         });
 
