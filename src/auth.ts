@@ -1,6 +1,4 @@
 import NextAuth, { Session } from 'next-auth';
-// @ts-expect-error next-auth beta missing types
-import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { NextRequest } from 'next/server';
 
@@ -22,15 +20,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             if (isOnDashboard) {
                 if (isLoggedIn) return true;
-                return false; // Redirect unauthenticated users to login page
+                return false;
             } else if (isLoggedIn) {
                 return Response.redirect(new URL('/dashboard', nextUrl));
             }
             return true;
         },
-        session({ session, token }: { session: Session; token: JWT }) {
-            if (token && session.user) {
-                session.user.id = token.sub as string;
+        session({ session, token }: { session: Session; token: { sub?: string } }) {
+            if (token?.sub && session.user) {
+                session.user.id = token.sub;
             }
             return session;
         }
@@ -43,7 +41,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials: Record<string, string> | undefined) {
-                // Mock authorization for now
                 if (credentials?.email === 'admin@admin.com') {
                     return { id: '1', email: 'admin@admin.com', name: 'Admin User' };
                 }

@@ -1,6 +1,5 @@
 "use client";
 
-// @ts-expect-error next-auth beta missing types
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { LogIn } from "lucide-react";
