@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         // 3. Mark all as PUBLISHING immediately to prevent duplicate cron processing
         // if this run takes too long or fails mid-way
         await prisma.post.updateMany({
-            where: { id: { in: duePosts.map(p => p.id) } },
+            where: { id: { in: duePosts.map((p: any) => p.id) } },
             data: { status: 'PUBLISHING' },
         });
 
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
                     userId: post.userId,
                     status: 'ACTIVE',
                     platform: {
-                        in: post.platformIds.map(p => p as any), // Cast string to enum
+                        in: post.platformIds as any[], // Cast to Prisma enum array
                     }
                 }
             });
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 
             for (const platformId of post.platformIds) {
                 // Find matching social account
-                const account = userAccounts.find(a => a.platform === platformId);
+                const account = userAccounts.find((a: any) => a.platform === platformId);
                 if (!account) {
                     successAll = false;
                     errors.push(`Not connected to ${platformId}`);
@@ -125,8 +125,9 @@ export async function GET(request: NextRequest) {
             details: results,
         });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('[Cron Publisher Error]', error);
-        return NextResponse.json({ error: error.message || 'Internal cron error' }, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        return NextResponse.json({ error: errorMessage || 'Internal cron error' }, { status: 500 });
     }
 }

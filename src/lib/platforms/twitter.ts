@@ -101,13 +101,14 @@ export async function publishToTwitter(
         let activeToken: string;
         try {
             activeToken = await refreshTwitterTokenIfNeeded(account);
-        } catch (tokenErr: any) {
+        } catch (tokenErr: unknown) {
             // Token refresh failed permanently
             await prisma.socialAccount.update({
                 where: { id: account.id },
                 data: { status: 'DISCONNECTED' },
             });
-            return { success: false, error: `Authentication expired. Please reconnect: ${tokenErr.message}` };
+            const errorMessage = tokenErr instanceof Error ? tokenErr.message : String(tokenErr);
+            return { success: false, error: `Authentication expired. Please reconnect: ${errorMessage}` };
         }
 
         // 2. Publish to v2 API
@@ -136,8 +137,9 @@ export async function publishToTwitter(
             postId: data.data.id, // Native Twitter ID
         };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('[Twitter Publish Exception]', error);
-        return { success: false, error: error.message || 'Unknown network error during publish' };
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        return { success: false, error: errorMessage || 'Unknown network error during publish' };
     }
 }
