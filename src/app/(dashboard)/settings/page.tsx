@@ -158,6 +158,57 @@ function SettingsContent() {
         }
     }, [fetchCredentials, searchParams]);
 
+    // ── Profile state ───────────────────────────────────────────────
+    const [profileName, setProfileName] = useState("");
+    const [profileEmail, setProfileEmail] = useState("");
+    const [profileLoading, setProfileLoading] = useState(true);
+    const [profileSaving, setProfileSaving] = useState(false);
+    const [profileError, setProfileError] = useState<string | null>(null);
+    const [profileSuccess, setProfileSuccess] = useState(false);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await fetch("/api/profile");
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                setProfileName(data.name ?? "");
+                setProfileEmail(data.email ?? "");
+            } catch {
+                // keep defaults
+            } finally {
+                setProfileLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const handleProfileSave = async () => {
+        setProfileError(null);
+        setProfileSaving(true);
+        setProfileSuccess(false);
+        try {
+            const res = await fetch("/api/profile", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: profileName, email: profileEmail }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error ?? "Failed to save");
+            setProfileName(data.name);
+            setProfileEmail(data.email);
+            setProfileSuccess(true);
+            showToast("Profile updated successfully!", "success");
+            setTimeout(() => setProfileSuccess(false), 3000);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to save profile";
+            setProfileError(msg);
+        } finally {
+            setProfileSaving(false);
+        }
+    };
+    // ── End profile state ───────────────────────────────────────────
+
     const updateForm = (platform: Platform, updates: Partial<FormState>) => {
         setForms(prev => ({
             ...prev,
@@ -244,16 +295,47 @@ function SettingsContent() {
                         <p className="text-sm text-text-secondary">Manage your personal information and preferences.</p>
                     </div>
                     <div className="p-6 space-y-6">
-                        <div className="space-y-4">
-                            <div className="grid gap-2">
-                                <label htmlFor="name" className="text-sm font-medium">Display Name</label>
-                                <input id="name" defaultValue="Admin User" className="w-full bg-surface border border-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:border-primary" />
+                        {profileLoading ? (
+                            <div className="flex items-center gap-2 text-text-secondary text-sm">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Loading profile…
                             </div>
-                            <div className="grid gap-2">
-                                <label htmlFor="email" className="text-sm font-medium">Email Address</label>
-                                <input id="email" type="email" defaultValue="admin@admin.com" className="w-full bg-surface border border-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:border-primary" />
+                        ) : (
+                            <div className="space-y-4">
+                                <div className="grid gap-2">
+                                    <label htmlFor="name" className="text-sm font-medium">Display Name</label>
+                                    <input
+                                        id="name"
+                                        value={profileName}
+                                        onChange={e => setProfileName(e.target.value)}
+                                        placeholder="Your display name"
+                                        className="w-full bg-surface border border-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-foreground placeholder:text-text-secondary"
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <label htmlFor="email" className="text-sm font-medium">Email Address</label>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        value={profileEmail}
+                                        onChange={e => setProfileEmail(e.target.value)}
+                                        placeholder="you@example.com"
+                                        className="w-full bg-surface border border-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-foreground placeholder:text-text-secondary"
+                                    />
+                                    <p className="text-xs text-text-secondary">
+                                        This email is used for OAuth connections and notifications. Changing it updates all platform auth flows.
+                                    </p>
+                                </div>
+
+                                {profileError && (
+                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400">
+                                        <AlertCircle className="w-4 h-4 shrink-0" />
+                                        {profileError}
+                                    </div>
+                                )}
                             </div>
-                        </div>
+                        )}
+
                         <div className="pt-4 border-t border-border">
                             <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                                 <Bell className="w-4 h-4" />
@@ -278,15 +360,31 @@ function SettingsContent() {
                                 ))}
                             </div>
                         </div>
-                        <div className="pt-4 border-t border-border flex justify-end">
-                            <button className="bg-primary hover:bg-primary-hover text-white px-6 py-2 rounded-lg font-medium transition-colors text-sm">
-                                Save Changes
+
+                        <div className="pt-4 border-t border-border flex items-center justify-between">
+                            {profileSuccess && (
+                                <span className="flex items-center gap-1.5 text-xs text-emerald-400">
+                                    <CheckCircle className="w-3.5 h-3.5" />
+                                    Saved successfully
+                                </span>
+                            )}
+                            <button
+                                onClick={handleProfileSave}
+                                disabled={profileSaving || profileLoading}
+                                className="ml-auto flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-semibold
+                                    bg-primary hover:bg-primary-hover text-white
+                                    disabled:opacity-50 disabled:cursor-not-allowed
+                                    transition-all active:scale-95"
+                            >
+                                {profileSaving
+                                    ? <><Loader2 className="w-4 h-4 animate-spin" />Saving…</>
+                                    : <><Save className="w-4 h-4" />Save Changes</>
+                                }
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-
             {/* Integrations Tab */}
             {activeTab === "integrations" && (
                 <div className="space-y-4">
