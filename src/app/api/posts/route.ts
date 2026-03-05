@@ -13,7 +13,7 @@ async function ensurePrismaUser(supabaseUser: User): Promise<string> {
     const email = supabaseUser.email ?? `${supabaseUser.id}@unknown.local`;
 
     const user = await prisma.user.upsert({
-        where: { email },
+        where: { id: supabaseUser.id },
         create: {
             id: supabaseUser.id,   // use the Supabase UUID as the Prisma id
             email,

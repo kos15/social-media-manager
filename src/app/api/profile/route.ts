@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 async function ensurePrismaUser(supabaseUser: { id: string; email?: string; user_metadata?: Record<string, string> }) {
     const email = supabaseUser.email ?? `${supabaseUser.id}@unknown.local`;
     return prisma.user.upsert({
-        where: { email },
+        where: { id: supabaseUser.id },
         create: {
             id: supabaseUser.id,
             email,
