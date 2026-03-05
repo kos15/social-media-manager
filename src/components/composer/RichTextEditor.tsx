@@ -23,10 +23,14 @@ export function RichTextEditor() {
         },
     });
 
-    // Sync state if it is reset externally
+    // Sync editor content whenever the store's currentPost changes externally
+    // (e.g. reset after schedule, or pre-filled via editPost from the calendar)
     useEffect(() => {
-        if (editor && currentPost === '') {
-            editor.commands.setContent('');
+        if (!editor) return;
+        const editorText = editor.getText();
+        // Only update if they differ to avoid infinite loops
+        if (editorText !== currentPost) {
+            editor.commands.setContent(currentPost || '');
         }
     }, [currentPost, editor]);
 
