@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
+import { getAppUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
     cookieStore.delete('instagram_oauth_state');
 
     try {
-        const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/connect/instagram/callback`;
+        const callbackUrl = `${getAppUrl()}/api/connect/instagram/callback`;
 
         const formData = new FormData();
         formData.append('client_id', process.env.INSTAGRAM_CLIENT_ID!);

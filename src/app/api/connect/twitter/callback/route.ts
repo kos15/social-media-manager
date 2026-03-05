@@ -3,6 +3,7 @@ import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { getPlatformCredential } from '@/lib/platform-credentials';
+import { getAppUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,7 @@ export const dynamic = 'force-dynamic';
  * User lookup: GET https://api.x.com/2/users/me
  */
 export async function GET(request: NextRequest) {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const baseUrl = getAppUrl();
 
     const user = await getServerUser(request);
     if (!user) {

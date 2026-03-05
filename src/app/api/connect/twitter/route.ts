@@ -3,6 +3,7 @@ import { getServerUser } from '@/lib/supabase/get-user';
 import { generateCodeVerifier, generateCodeChallenge } from '@/lib/oauth-utils';
 import { getPlatformCredential } from '@/lib/platform-credentials';
 import { cookies } from 'next/headers';
+import { getAppUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
     const user = await getServerUser(request);
     if (!user) {
-        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/login`);
+        return NextResponse.redirect(`${getAppUrl()}/login`);
     }
 
     // Load credentials from DB first, then env fallback
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
         path: '/',
     });
 
-    const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/connect/twitter/callback`;
+    const callbackUrl = `${getAppUrl()}/api/connect/twitter/callback`;
 
     // Build X authorization URL — using https://x.com/i/oauth2/authorize (correct endpoint per docs)
     const url = new URL('https://x.com/i/oauth2/authorize');
