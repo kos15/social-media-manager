@@ -3,6 +3,7 @@ import { getServerUser } from '@/lib/supabase/get-user';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { getAppUrl } from '@/lib/utils';
+import { getPlatformCredential } from '@/lib/platform-credentials';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +34,11 @@ export async function GET(request: NextRequest) {
     try {
         const callbackUrl = `${getAppUrl()}/api/connect/linkedin/callback`;
 
+        const creds = await getPlatformCredential('LINKEDIN');
+        if (!creds || !creds.clientId || !creds.clientSecret) {
+            return NextResponse.redirect(new URL('/settings?error=linkedin_missing_credentials', request.url));
+        }
+
         const tokenResponse = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -40,8 +46,8 @@ export async function GET(request: NextRequest) {
                 grant_type: 'authorization_code',
                 code,
                 redirect_uri: callbackUrl,
-                client_id: process.env.LINKEDIN_CLIENT_ID!,
-                client_secret: process.env.LINKEDIN_CLIENT_SECRET!,
+                client_id: creds.clientId,
+                client_secret: creds.clientSecret,
             }),
         });
 

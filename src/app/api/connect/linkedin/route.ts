@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerUser } from '@/lib/supabase/get-user';
 import { cookies } from 'next/headers';
 import { getAppUrl } from '@/lib/utils';
+import { getPlatformCredential } from '@/lib/platform-credentials';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,10 +12,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    const clientId = process.env.LINKEDIN_CLIENT_ID;
-    if (!clientId) {
-        return NextResponse.json({ error: 'LinkedIn OAuth not configured. Set LINKEDIN_CLIENT_ID in .env' }, { status: 500 });
+    const creds = await getPlatformCredential('LINKEDIN');
+    if (!creds || !creds.clientId) {
+        return NextResponse.redirect(new URL('/settings?error=linkedin_not_configured', request.url));
     }
+
+    const clientId = creds.clientId;
 
     const state = crypto.randomUUID();
     const cookieStore = cookies();
