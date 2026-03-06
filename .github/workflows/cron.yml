@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Trigger Publisher Endpoint
         run: |
-          curl -i -X GET "https://social-media-manager-git-main-kosmishraai-5105s-projects.vercel.app/api/cron/publish?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${{ secrets.VERCEL_BYPASS_TOKEN }}" \
+          curl -i -L -X GET "https://social-media-manager-git-main-kosmishraai-5105s-projects.vercel.app/api/cron/publish?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=${{ secrets.VERCEL_BYPASS_TOKEN }}" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
