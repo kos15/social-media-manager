@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Trigger Publisher Endpoint
         run: |
-          curl -i -X GET "https://social-media-manager-git-main-kosmishraai-5105s-projects.vercel.app/api/cron/publish" \
+          curl -i -X GET "https://social-media-manager-kosmishraais-projects.vercel.app/api/cron/publish" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
