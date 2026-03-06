@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { publishToTwitter } from '@/lib/platforms/twitter';
+import { publishToLinkedIn } from '@/lib/platforms/linkedin';
 
 export const dynamic = 'force-dynamic';
 
@@ -85,6 +86,12 @@ export async function GET(request: NextRequest) {
                     if (!result.success) {
                         successAll = false;
                         errors.push(`Twitter: ${result.error}`);
+                    }
+                } else if (platformId === 'LINKEDIN') {
+                    const result = await publishToLinkedIn(post.content, account.id);
+                    if (!result.success) {
+                        successAll = false;
+                        errors.push(`LinkedIn: ${result.error}`);
                     }
                 } else {
                     // Placeholder for LinkedIn, Instagram, etc.
