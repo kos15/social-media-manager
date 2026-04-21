@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { publishToTwitter } from "@/lib/platforms/twitter";
 import { publishToLinkedIn } from "@/lib/platforms/linkedin";
 import { publishToInstagram } from "@/lib/platforms/instagram";
+import { publishToYouTube } from "@/lib/platforms/youtube";
 
 export const dynamic = "force-dynamic";
 
@@ -107,6 +108,16 @@ export async function GET(request: NextRequest) {
           if (!result.success) {
             successAll = false;
             errors.push(`Instagram: ${result.error}`);
+          }
+        } else if (platformId === "YOUTUBE") {
+          const result = await publishToYouTube(
+            post.content,
+            post.mediaUrls,
+            account.id,
+          );
+          if (!result.success) {
+            successAll = false;
+            errors.push(`YouTube: ${result.error}`);
           }
         } else {
           successAll = false;

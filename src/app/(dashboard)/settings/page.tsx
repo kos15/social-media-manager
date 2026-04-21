@@ -149,7 +149,7 @@ const PLATFORM_CONFIG: Record<
       },
     ],
     notes:
-      "Google OAuth 2.0 with YouTube Data API v3. Enable YouTube Data API v3 in your Google Cloud project.",
+      "Google OAuth 2.0. In Google Cloud Console: create an OAuth 2.0 Client ID (Web Application), add the Callback URL above as an Authorized Redirect URI, and enable both 'YouTube Data API v3' (for uploading and managing videos) and 'YouTube Analytics API v2' (for channel metrics). Required scopes: youtube.upload, youtube.readonly, yt-analytics.readonly. During development, add test user Google accounts in OAuth consent screen → Test users. Use prompt=consent to ensure a refresh_token is issued.",
   },
 };
 
