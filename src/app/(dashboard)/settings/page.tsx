@@ -113,19 +113,19 @@ const PLATFORM_CONFIG: Record<
     fields: [
       {
         key: "clientId",
-        label: "App ID (Client ID)",
-        placeholder: "Enter your Meta App ID",
+        label: "Facebook App ID",
+        placeholder: "Enter your Facebook App ID",
         required: true,
       },
       {
         key: "clientSecret",
-        label: "App Secret",
-        placeholder: "Enter your Meta App Secret",
+        label: "Facebook App Secret",
+        placeholder: "Enter your Facebook App Secret",
         required: true,
       },
     ],
     notes:
-      "Uses Instagram Basic Display API (Meta Developer App). Enable 'user_profile' and 'user_media' scopes.",
+      "Uses Instagram Graph API via a Facebook App (NOT Instagram Basic Display API). At developers.facebook.com: create a Facebook App → add 'Instagram Graph API' product → request permissions: instagram_basic, instagram_content_publish, instagram_manage_insights, pages_show_list, pages_read_engagement. The connecting user must have an Instagram Professional account (Business or Creator) linked to a Facebook Page they manage.",
   },
   YOUTUBE: {
     name: "YouTube",

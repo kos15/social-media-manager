@@ -136,7 +136,10 @@ function AccountsContent() {
         youtube_denied: "YouTube connection was denied.",
         twitter_failed: "Twitter connection failed. Check your API keys.",
         linkedin_failed: "LinkedIn connection failed. Check your API keys.",
-        instagram_failed: "Instagram connection failed. Check your API keys.",
+        instagram_failed:
+          "Instagram connection failed. Check your Facebook App credentials.",
+        instagram_no_business_account:
+          "No Instagram Professional account found. Make sure your account is Business or Creator and linked to a Facebook Page you manage.",
         youtube_failed: "YouTube connection failed. Check your API keys.",
         twitter_invalid_state:
           "Twitter OAuth state mismatch. Please try again.",
