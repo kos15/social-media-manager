@@ -37,14 +37,14 @@ export default function CalendarPage() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch('/api/posts');
-        if (!res.ok) throw new Error('Failed to load posts');
+        const res = await fetch("/api/posts");
+        if (!res.ok) throw new Error("Failed to load posts");
         const dbPosts: ScheduledPost[] = await res.json();
         // Bulk-replace the store with the authoritative DB state
         setScheduledPosts(dbPosts);
       } catch (err) {
-        console.error('Calendar fetch error:', err);
-        setFetchError('Could not load posts from the server.');
+        console.error("Calendar fetch error:", err);
+        setFetchError("Could not load posts from the server.");
       } finally {
         setLoading(false);
       }
@@ -81,9 +81,11 @@ export default function CalendarPage() {
   });
 
   return (
-    <div className="space-y-6 flex flex-col h-[calc(100vh-8rem)]">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Content Calendar</h1>
+    <div className="space-y-4 md:space-y-6 flex flex-col h-[calc(100vh-3.5rem)] md:h-[calc(100vh-8rem)]">
+      <div className="flex items-center justify-between shrink-0">
+        <h1 className="text-xl md:text-2xl font-bold tracking-tight">
+          Content Calendar
+        </h1>
         {loading && (
           <div className="flex items-center gap-2 text-xs text-text-secondary">
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -98,7 +100,7 @@ export default function CalendarPage() {
         </div>
       )}
 
-      <div className="flex-1 bg-surface-elevated border border-border rounded-xl p-6 relative z-0">
+      <div className="flex-1 bg-surface-elevated border border-border rounded-xl p-3 md:p-6 relative z-0 min-h-0">
         <style jsx global>{`
           /* ── FullCalendar base ── */
           .fc {
@@ -151,26 +153,37 @@ export default function CalendarPage() {
             color: hsl(var(--foreground)) !important;
             border-radius: 0 !important;
           }
-          .fc .fc-button-group .fc-button:first-child { border-radius: 0.5rem 0 0 0.5rem !important; }
-          .fc .fc-button-group .fc-button:last-child  { border-radius: 0 0.5rem 0.5rem 0 !important; }
-          .fc .fc-button-group .fc-button:only-child  { border-radius: 0.5rem !important; }
+          .fc .fc-button-group .fc-button:first-child {
+            border-radius: 0.5rem 0 0 0.5rem !important;
+          }
+          .fc .fc-button-group .fc-button:last-child {
+            border-radius: 0 0.5rem 0.5rem 0 !important;
+          }
+          .fc .fc-button-group .fc-button:only-child {
+            border-radius: 0.5rem !important;
+          }
           .fc .fc-button-group .fc-button:hover:not(:disabled) {
             background: hsl(var(--surface-elevated)) !important;
             border-color: hsl(var(--primary)) !important;
             color: hsl(var(--foreground)) !important;
           }
           .fc .fc-button-group .fc-button.fc-button-active,
-          .fc .fc-button-group .fc-button-primary:not(:disabled).fc-button-active {
+          .fc
+            .fc-button-group
+            .fc-button-primary:not(:disabled).fc-button-active {
             background: hsl(var(--primary)) !important;
             border-color: hsl(var(--primary)) !important;
             color: #fff !important;
           }
 
           /* ── Chevron icons inside buttons ── */
-          .fc .fc-icon { color: inherit !important; }
+          .fc .fc-icon {
+            color: inherit !important;
+          }
 
           /* ── Grid ── */
-          .fc-theme-standard td, .fc-theme-standard th {
+          .fc-theme-standard td,
+          .fc-theme-standard th {
             border-color: hsl(var(--border)) !important;
           }
           .fc-daygrid-day.fc-day-today {
@@ -192,12 +205,36 @@ export default function CalendarPage() {
             color: hsl(var(--foreground)) !important;
           }
 
+          /* ── Mobile responsive toolbar ── */
+          @media (max-width: 640px) {
+            .fc .fc-toolbar {
+              flex-wrap: wrap;
+              gap: 0.5rem;
+            }
+            .fc .fc-toolbar-title {
+              font-size: 0.95rem !important;
+            }
+            .fc .fc-button,
+            .fc .fc-button-primary {
+              padding: 0.25rem 0.5rem !important;
+              font-size: 0.75rem !important;
+            }
+            .fc .fc-col-header-cell-cushion {
+              font-size: 0.65rem !important;
+            }
+            .fc .fc-daygrid-day-number {
+              font-size: 0.75rem !important;
+            }
+          }
+
           /* ── Event chips ── */
           .fc-h-event {
             border: none !important;
             background-color: transparent !important;
           }
-          .fc-event-main { padding: 0 !important; }
+          .fc-event-main {
+            padding: 0 !important;
+          }
         `}</style>
 
         <FullCalendar
@@ -215,7 +252,10 @@ export default function CalendarPage() {
             return (
               <div
                 className={`px-2 py-1 text-xs truncate font-medium rounded-md w-full text-white shadow-sm cursor-pointer transition-opacity ${published ? "opacity-50 line-through decoration-white/60" : ""}`}
-                style={{ backgroundColor: arg.event.backgroundColor || "var(--primary)" }}
+                style={{
+                  backgroundColor:
+                    arg.event.backgroundColor || "var(--primary)",
+                }}
                 title={arg.event.title}
               >
                 {arg.event.title}
