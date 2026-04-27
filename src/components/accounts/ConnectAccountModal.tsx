@@ -58,7 +58,7 @@ export function ConnectAccountModal({ isOpen, onClose, onSuccess, platform }: Co
                             <div className="w-2 h-2 rounded-full bg-text-secondary animate-pulse delay-75" />
                             <div className="w-2 h-2 rounded-full bg-text-secondary animate-pulse delay-150" />
                         </div>
-                        <div className={`w - 16 h - 16 rounded - 2xl bg - surface - elevated border border - border shadow - sm flex items - center justify - center ${platform.color} `}>
+                        <div className={`w-16 h-16 rounded-2xl bg-surface-elevated border border-border shadow-sm flex items-center justify-center ${platform.color}`}>
                             <PlatformIcon className="w-8 h-8" />
                         </div>
                     </div>

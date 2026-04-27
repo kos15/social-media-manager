@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { PlatformSelector } from "@/components/composer/PlatformSelector";
 import { RichTextEditor } from "@/components/composer/RichTextEditor";
 import { MediaUpload } from "@/components/composer/MediaUpload";
@@ -6,17 +9,35 @@ import { SchedulingPicker } from "@/components/composer/SchedulingPicker";
 import { Hash } from "lucide-react";
 
 export default function ComposerPage() {
+    const [mobileTab, setMobileTab] = useState<"editor" | "preview">("editor");
+
     return (
-        <div className="space-y-6 h-[calc(100vh-8rem)]">
+        <div className="space-y-4 flex flex-col md:h-[calc(100vh-8rem)]">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold tracking-tight">Post Composer</h1>
+                {/* Mobile tab switcher */}
+                <div className="flex md:hidden bg-surface border border-border rounded-lg p-1">
+                    <button
+                        onClick={() => setMobileTab("editor")}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${mobileTab === "editor" ? "bg-primary text-white" : "text-text-secondary hover:text-foreground"}`}
+                    >
+                        Editor
+                    </button>
+                    <button
+                        onClick={() => setMobileTab("preview")}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${mobileTab === "preview" ? "bg-primary text-white" : "text-text-secondary hover:text-foreground"}`}
+                    >
+                        Preview
+                    </button>
+                </div>
             </div>
-            <div className="flex h-[calc(100%-3rem)] border border-border rounded-xl overflow-hidden bg-surface-elevated shadow-sm">
+
+            <div className="flex flex-col md:flex-row border border-border rounded-xl overflow-hidden bg-surface-elevated shadow-sm md:flex-1 md:min-h-0">
                 {/* Left Panel - Controls */}
-                <div className="w-1/2 border-r border-border p-6 flex flex-col space-y-6 overflow-y-auto custom-scrollbar">
+                <div className={`md:w-1/2 md:border-r border-border p-4 md:p-6 flex flex-col space-y-6 overflow-y-auto custom-scrollbar ${mobileTab === "editor" ? "block" : "hidden"} md:block`}>
                     <PlatformSelector />
 
-                    <div className="border-t border-border pt-6 flex-1 flex flex-col min-h-[250px]">
+                    <div className="border-t border-border pt-4 md:pt-6 flex-1 flex flex-col min-h-[250px]">
                         <RichTextEditor />
 
                         <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
@@ -28,17 +49,17 @@ export default function ComposerPage() {
                         </div>
                     </div>
 
-                    <div className="border-t border-border pt-6">
+                    <div className="border-t border-border pt-4 md:pt-6">
                         <MediaUpload />
                     </div>
 
-                    <div className="border-t border-border pt-6">
+                    <div className="border-t border-border pt-4 md:pt-6">
                         <SchedulingPicker />
                     </div>
                 </div>
 
                 {/* Right Panel - Preview */}
-                <div className="w-1/2 p-6 flex flex-col bg-surface overflow-hidden">
+                <div className={`md:w-1/2 p-4 md:p-6 flex flex-col bg-surface overflow-hidden ${mobileTab === "preview" ? "block min-h-[400px]" : "hidden"} md:block`}>
                     <h3 className="text-sm font-medium text-text-secondary mb-4 shrink-0">Live Preview</h3>
                     <LivePreview />
                 </div>

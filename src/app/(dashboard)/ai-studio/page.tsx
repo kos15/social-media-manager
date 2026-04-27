@@ -9,6 +9,7 @@ export default function AIStudioPage() {
     const [result, setResult] = useState("");
     const [activeTab, setActiveTab] = useState<"caption" | "hashtag" | "repurpose">("caption");
     const [copied, setCopied] = useState(false);
+    const [mobileTab, setMobileTab] = useState<"input" | "output">("input");
 
     const handleGenerate = async () => {
         if (!prompt) return;
@@ -38,14 +39,29 @@ export default function AIStudioPage() {
     };
 
     return (
-        <div className="space-y-6 h-[calc(100vh-8rem)] flex flex-col">
+        <div className="space-y-4 flex flex-col md:h-[calc(100vh-8rem)]">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold tracking-tight">AI Studio</h1>
+                {/* Mobile tab switcher */}
+                <div className="flex md:hidden bg-surface border border-border rounded-lg p-1">
+                    <button
+                        onClick={() => setMobileTab("input")}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${mobileTab === "input" ? "bg-primary text-white" : "text-text-secondary hover:text-foreground"}`}
+                    >
+                        Input
+                    </button>
+                    <button
+                        onClick={() => setMobileTab("output")}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${mobileTab === "output" ? "bg-primary text-white" : "text-text-secondary hover:text-foreground"}`}
+                    >
+                        Result
+                    </button>
+                </div>
             </div>
 
-            <div className="flex h-[calc(100%-3rem)] border border-border rounded-xl overflow-hidden bg-surface-elevated shadow-sm">
+            <div className="flex flex-col md:flex-row border border-border rounded-xl overflow-hidden bg-surface-elevated shadow-sm md:flex-1 md:min-h-0">
                 {/* Left Panel - Input */}
-                <div className="w-1/2 border-r border-border p-6 flex flex-col">
+                <div className={`md:w-1/2 md:border-r border-border p-4 md:p-6 flex flex-col ${mobileTab === "input" ? "block" : "hidden"} md:block`}>
                     <div className="flex bg-surface p-1 rounded-lg border border-border mb-6">
                         {[
                             { id: "caption", label: "Caption Writer", icon: MessageSquare },
@@ -113,7 +129,7 @@ export default function AIStudioPage() {
                 </div>
 
                 {/* Right Panel - Output */}
-                <div className="w-1/2 bg-surface p-6 flex flex-col">
+                <div className={`md:w-1/2 bg-surface p-4 md:p-6 flex flex-col ${mobileTab === "output" ? "block min-h-[400px]" : "hidden"} md:block`}>
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-medium text-text-secondary flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-primary" />

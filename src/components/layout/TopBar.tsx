@@ -1,10 +1,17 @@
 import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { Bell } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 
-export function TopBar() {
+export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
     return (
-        <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-6">
-            <div className="flex-1">
+        <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4 md:px-6">
+            <div className="flex-1 flex items-center gap-3">
+                <button
+                    onClick={onMenuClick}
+                    className="md:hidden p-2 rounded-lg bg-surface hover:bg-surface-elevated transition-colors border border-border"
+                    aria-label="Open menu"
+                >
+                    <Menu className="w-5 h-5 text-text-secondary" />
+                </button>
                 {/* Search or context could go here */}
             </div>
 
