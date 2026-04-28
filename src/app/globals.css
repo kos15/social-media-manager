@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 222 47% 11%;
     --surface: #1A1D27;
     --surface-elevated: #22263A;
-    --border: 0 0% 89.8%;
-    --primary: 0 0% 9%;
-    --primary-hover: #4F46E5;
-    --accent: 0 0% 96.1%;
+    --border: 220 25% 22%;
+    --primary: 246 83% 65%;
+    --primary-hover: 244 75% 58%;
+    --accent: 246 83% 65%;
     --text-primary: #F1F5F9;
     --text-secondary: #94A3B8;
     --success: #10B981;
@@ -21,86 +21,79 @@
     --linkedin: #0A66C2;
     --instagram: #E1306C;
     --youtube: #FF0000;
-    
+
     --radius: 0.5rem;
-    
-    --foreground: 0 0% 3.9%;
-    
-    --card: 0 0% 100%;
-    
-    --card-foreground: 0 0% 3.9%;
-    
-    --popover: 0 0% 100%;
-    
-    --popover-foreground: 0 0% 3.9%;
-    
-    --primary-foreground: 0 0% 98%;
-    
-    --secondary: 0 0% 96.1%;
-    
-    --secondary-foreground: 0 0% 9%;
-    
-    --muted: 0 0% 96.1%;
-    
-    --muted-foreground: 0 0% 45.1%;
-    
-    --accent-foreground: 0 0% 9%;
-    
+
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+
+    --popover-foreground: 210 40% 98%;
+
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 25% 18%;
+
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 25% 18%;
+
+    --muted-foreground: 215 20% 55%;
+
+    --accent-foreground: 0 0% 100%;
+
     --destructive: 0 84.2% 60.2%;
-    
+
     --destructive-foreground: 0 0% 98%;
-    
-    --input: 0 0% 89.8%;
-    
-    --ring: 0 0% 3.9%;
-    
+
+    --input: 220 25% 22%;
+
+    --ring: 246 83% 65%;
+
     --chart-1: 12 76% 61%;
-    
+
     --chart-2: 173 58% 39%;
-    
+
     --chart-3: 197 37% 24%;
-    
+
     --chart-4: 43 74% 66%;
-    
+
     --chart-5: 27 87% 67%;
   }
 
-  /* Light Theme Overrides */
+  /* .dark class keeps indigo primary, just adjusts other tokens if needed */
   .dark {
-    /* Current default is dark */
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --primary: 246 83% 65%;
+    --primary-hover: 244 75% 58%;
+    --primary-foreground: 0 0% 100%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
 
   [data-theme="light"] {
-    --background: #FFFFFF;
+    --background: 0 0% 100%;
     --surface: #F8FAFC;
     --surface-elevated: #F1F5F9;
     --border: #E2E8F0;
+    --foreground: 220 20% 10%;
     --text-primary: #0F1117;
     --text-secondary: #475569;
+    --primary: 246 83% 58%;
+    --primary-hover: 244 75% 50%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 215 20% 40%;
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 220 20% 10%;
+    --input: #E2E8F0;
+    --border: #E2E8F0;
   }
 }
 

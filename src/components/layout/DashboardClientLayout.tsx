@@ -38,11 +38,12 @@ export function DashboardClientLayout({ children }: { children: React.ReactNode 
             {/* Mobile drawer */}
             <div
                 className={cn(
-                    "fixed inset-y-0 left-0 z-50 w-64 bg-surface-elevated border-r border-border flex flex-col transform transition-transform duration-300 ease-in-out md:hidden",
+                    "fixed inset-y-0 left-0 z-50 w-72 flex flex-col transform transition-transform duration-300 ease-in-out md:hidden",
+                    "bg-[#13162280] backdrop-blur-2xl border-r border-white/10 shadow-2xl shadow-black/40",
                     mobileOpen ? "translate-x-0" : "-translate-x-full"
                 )}
             >
-                <div className="p-5 flex items-center justify-between border-b border-border">
+                <div className="p-5 flex items-center justify-between border-b border-white/10">
                     <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                         SocialPulse
                     </h1>
