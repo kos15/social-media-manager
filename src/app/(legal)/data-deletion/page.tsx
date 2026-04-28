@@ -14,10 +14,10 @@ export default function DataDeletionPage() {
         <article className="prose prose-neutral dark:prose-invert max-w-none">
             <div className="mb-10">
                 <h1 className="text-4xl font-bold tracking-tight mb-3">Data Deletion Instructions</h1>
-                <p className="text-muted-foreground text-sm">Last updated: {LAST_UPDATED}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">Last updated: {LAST_UPDATED}</p>
             </div>
 
-            <p className="text-lg text-muted-foreground mb-10">
+            <p className="text-lg text-gray-500 dark:text-gray-400 mb-10">
                 You have the right to delete your data from SocialPulse at any time. This page explains
                 how to remove your account, disconnect social media platforms, and request full data deletion —
                 including data collected through Meta (Instagram / Facebook) integrations.
@@ -117,13 +117,13 @@ export default function DataDeletionPage() {
                     <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
                 </p>
 
-                <div className="not-prose bg-muted/50 border border-border rounded-xl p-5 mt-4">
+                <div className="not-prose bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl p-5 mt-4">
                     <p className="text-sm font-semibold mb-2">Meta Data Deletion Callback URL</p>
-                    <p className="text-xs text-muted-foreground mb-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                         This endpoint is used by Meta to programmatically notify SocialPulse of
                         data deletion requests when users remove our app from their Meta account.
                     </p>
-                    <code className="block bg-background border border-border rounded-lg px-4 py-2 text-sm font-mono break-all">
+                    <code className="block bg-background border border-gray-200 dark:border-zinc-800 rounded-lg px-4 py-2 text-sm font-mono break-all">
                         https://socialpulse.app/api/meta/data-deletion
                     </code>
                 </div>
@@ -178,18 +178,18 @@ export default function DataDeletionPage() {
                     If you are unable to delete your account through the application, or if you want to
                     request deletion of specific data, contact us:
                 </p>
-                <div className="not-prose bg-muted/50 border border-border rounded-xl p-6 space-y-3">
+                <div className="not-prose bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 space-y-3">
                     <div>
                         <p className="text-sm font-semibold">Email</p>
-                        <a href={`mailto:${CONTACT_EMAIL}`} className="text-primary hover:underline text-sm">{CONTACT_EMAIL}</a>
+                        <a href={`mailto:${CONTACT_EMAIL}`} className="text-gray-900 dark:text-white hover:underline font-medium text-sm">{CONTACT_EMAIL}</a>
                     </div>
                     <div>
                         <p className="text-sm font-semibold">Subject line</p>
-                        <p className="text-sm text-muted-foreground font-mono">Data Deletion Request — [your email address]</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">Data Deletion Request — [your email address]</p>
                     </div>
                     <div>
                         <p className="text-sm font-semibold">Include</p>
-                        <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                        <ul className="text-sm text-gray-500 dark:text-gray-400 list-disc list-inside space-y-1">
                             <li>The email address associated with your account</li>
                             <li>Which data you want deleted (account, specific platform, all data)</li>
                             <li>Any relevant platform user IDs if known</li>
@@ -197,7 +197,7 @@ export default function DataDeletionPage() {
                     </div>
                     <div>
                         <p className="text-sm font-semibold">Response time</p>
-                        <p className="text-sm text-muted-foreground">We will acknowledge your request within <strong>72 hours</strong> and complete deletion within <strong>30 days</strong>.</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">We will acknowledge your request within <strong>72 hours</strong> and complete deletion within <strong>30 days</strong>.</p>
                     </div>
                 </div>
             </Section>
@@ -226,7 +226,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     return (
         <section className="mb-10">
             <h2 className="text-2xl font-semibold mb-4">{title}</h2>
-            <div className="space-y-4 text-muted-foreground leading-relaxed">{children}</div>
+            <div className="space-y-4 text-gray-500 dark:text-gray-400 leading-relaxed">{children}</div>
         </section>
     );
 }
@@ -238,23 +238,23 @@ function Card({ icon, title, description, color }: {
     color: string;
 }) {
     return (
-        <div className="bg-muted/30 border border-border rounded-xl p-5 space-y-2">
+        <div className="bg-gray-50 dark:bg-zinc-900/40 border border-gray-200 dark:border-zinc-800 rounded-xl p-5 space-y-2">
             <div className="flex items-center gap-2">
                 {icon}
                 <span className="font-semibold text-sm">{title}</span>
             </div>
-            <p className="text-xs text-muted-foreground">{description}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
         </div>
     );
 }
 
 function DataCategory({ title, items }: { title: string; items: string[] }) {
     return (
-        <div className="bg-muted/30 border border-border rounded-xl p-4">
+        <div className="bg-gray-50 dark:bg-zinc-900/40 border border-gray-200 dark:border-zinc-800 rounded-xl p-4">
             <p className="text-sm font-semibold mb-2">{title}</p>
             <ul className="space-y-1">
                 {items.map(item => (
-                    <li key={item} className="text-xs text-muted-foreground flex items-center gap-2">
+                    <li key={item} className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary/60 shrink-0" />
                         {item}
                     </li>

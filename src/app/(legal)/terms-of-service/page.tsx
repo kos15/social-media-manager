@@ -13,7 +13,7 @@ export default function TermsOfServicePage() {
         <article className="prose prose-neutral dark:prose-invert max-w-none">
             <div className="mb-10">
                 <h1 className="text-4xl font-bold tracking-tight mb-3">Terms of Service</h1>
-                <p className="text-muted-foreground text-sm">Last updated: {LAST_UPDATED}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">Last updated: {LAST_UPDATED}</p>
             </div>
 
             <Section title="1. Acceptance of Terms">
@@ -228,11 +228,11 @@ export default function TermsOfServicePage() {
 
             <Section title="14. Contact Information">
                 <p>For questions about these Terms, contact us at:</p>
-                <div className="not-prose bg-muted/50 border border-border rounded-xl p-6 mt-4 space-y-1 text-sm">
+                <div className="not-prose bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 mt-4 space-y-1 text-sm">
                     <p><strong>SocialPulse Legal</strong></p>
-                    <p>Email: <a href={`mailto:${CONTACT_EMAIL}`} className="text-primary hover:underline">{CONTACT_EMAIL}</a></p>
-                    <p>Privacy Policy: <a href="/privacy-policy" className="text-primary hover:underline">socialpulse.app/privacy-policy</a></p>
-                    <p>Data Deletion: <a href="/data-deletion" className="text-primary hover:underline">socialpulse.app/data-deletion</a></p>
+                    <p>Email: <a href={`mailto:${CONTACT_EMAIL}`} className="text-gray-900 dark:text-white hover:underline font-medium">{CONTACT_EMAIL}</a></p>
+                    <p>Privacy Policy: <a href="/privacy-policy" className="text-gray-900 dark:text-white hover:underline font-medium">socialpulse.app/privacy-policy</a></p>
+                    <p>Data Deletion: <a href="/data-deletion" className="text-gray-900 dark:text-white hover:underline font-medium">socialpulse.app/data-deletion</a></p>
                 </div>
             </Section>
         </article>
@@ -243,7 +243,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     return (
         <section className="mb-10">
             <h2 className="text-2xl font-semibold mb-4">{title}</h2>
-            <div className="space-y-4 text-muted-foreground leading-relaxed">{children}</div>
+            <div className="space-y-4 text-gray-500 dark:text-gray-400 leading-relaxed">{children}</div>
         </section>
     );
 }
