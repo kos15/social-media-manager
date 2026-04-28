@@ -44,7 +44,7 @@ export function DashboardClientLayout({ children }: { children: React.ReactNode 
                 )}
             >
                 <div className="p-5 flex items-center justify-between border-b border-white/10">
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    <h1 className="text-xl font-bold text-white tracking-tight">
                         SocialPulse
                     </h1>
                     <button

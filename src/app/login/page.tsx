@@ -33,22 +33,22 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
-            <div className="w-full max-w-md px-8 py-10 rounded-2xl bg-white/5 backdrop-blur border border-white/10 shadow-2xl">
+        <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+            <div className="w-full max-w-md px-8 py-10 rounded-2xl bg-[#141414] border border-[#2a2a2a] shadow-2xl">
                 {/* Logo */}
-                <div className="flex items-center justify-center gap-2 mb-8">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center">
-                        <LogIn className="w-5 h-5 text-white" />
+                <div className="flex items-center justify-center gap-2.5 mb-8">
+                    <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center">
+                        <LogIn className="w-5 h-5 text-black" />
                     </div>
-                    <span className="text-xl font-bold text-white">SocialFlow</span>
+                    <span className="text-xl font-bold text-white tracking-tight">SocialPulse</span>
                 </div>
 
                 <h1 className="text-2xl font-bold text-white text-center mb-1">Welcome back</h1>
-                <p className="text-slate-400 text-center text-sm mb-8">Sign in to your account</p>
+                <p className="text-[#888] text-center text-sm mb-8">Sign in to your account</p>
 
                 <form onSubmit={handleLogin} className="space-y-5">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+                        <label className="block text-sm font-medium text-[#aaa] mb-1.5">Email</label>
                         <input
                             id="email"
                             type="email"
@@ -56,12 +56,12 @@ export default function LoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="you@example.com"
-                            className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition"
+                            className="w-full px-4 py-2.5 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-white placeholder-[#555] focus:outline-none focus:ring-1 focus:ring-[#555] focus:border-[#555] transition"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+                        <label className="block text-sm font-medium text-[#aaa] mb-1.5">Password</label>
                         <div className="relative">
                             <input
                                 id="password"
@@ -70,12 +70,12 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"
-                                className="w-full px-4 py-2.5 pr-10 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition"
+                                className="w-full px-4 py-2.5 pr-10 rounded-lg bg-[#1e1e1e] border border-[#2a2a2a] text-white placeholder-[#555] focus:outline-none focus:ring-1 focus:ring-[#555] focus:border-[#555] transition"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] hover:text-[#aaa] transition"
                             >
                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
@@ -92,16 +92,16 @@ export default function LoginPage() {
                         id="login-btn"
                         type="submit"
                         disabled={loading}
-                        className="w-full py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-semibold hover:opacity-90 transition disabled:opacity-60 flex items-center justify-center gap-2"
+                        className="w-full py-2.5 rounded-lg bg-white text-black font-semibold hover:bg-[#e5e5e5] transition disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
                         {loading ? "Signing in…" : "Sign in"}
                     </button>
                 </form>
 
-                <p className="text-center text-slate-400 text-sm mt-6">
+                <p className="text-center text-[#666] text-sm mt-6">
                     Don&apos;t have an account?{" "}
-                    <Link href="/signup" className="text-violet-400 hover:text-violet-300 font-medium transition">
+                    <Link href="/signup" className="text-white hover:text-[#ccc] font-medium transition">
                         Sign up
                     </Link>
                 </p>

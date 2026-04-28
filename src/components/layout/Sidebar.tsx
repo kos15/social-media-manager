@@ -20,7 +20,7 @@ export function Sidebar() {
     return (
         <div className="hidden md:flex flex-col w-64 border-r border-border bg-surface-elevated/50 h-screen sticky top-0">
             <div className="p-6">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <h1 className="text-xl font-bold text-foreground tracking-tight">
                     SocialPulse
                 </h1>
             </div>

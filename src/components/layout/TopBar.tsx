@@ -23,7 +23,7 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
 
                 <ThemeToggle />
 
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent border border-border overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-[#333] border border-border overflow-hidden">
                     {/* Avatar placeholder */}
                 </div>
             </div>
