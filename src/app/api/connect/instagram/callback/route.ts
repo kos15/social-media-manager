@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerUser } from '@/lib/supabase/get-user';
+import { getPlatformCredential } from '@/lib/platform-credentials';
 import prisma from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { getAppUrl } from '@/lib/utils';
@@ -31,11 +32,16 @@ export async function GET(request: NextRequest) {
     cookieStore.delete('instagram_oauth_state');
 
     try {
+        const creds = await getPlatformCredential('INSTAGRAM');
+        if (!creds) {
+            return NextResponse.redirect(new URL('/accounts?error=instagram_failed', request.url));
+        }
+
         const callbackUrl = `${getAppUrl()}/api/connect/instagram/callback`;
 
         const formData = new FormData();
-        formData.append('client_id', process.env.INSTAGRAM_CLIENT_ID!);
-        formData.append('client_secret', process.env.INSTAGRAM_CLIENT_SECRET!);
+        formData.append('client_id', creds.clientId);
+        formData.append('client_secret', creds.clientSecret);
         formData.append('grant_type', 'authorization_code');
         formData.append('redirect_uri', callbackUrl);
         formData.append('code', code);
@@ -51,7 +57,7 @@ export async function GET(request: NextRequest) {
         }
 
         const longLivedResponse = await fetch(
-            `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}&access_token=${shortToken.access_token}`
+            `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${creds.clientSecret}&access_token=${shortToken.access_token}`
         );
         const longToken = await longLivedResponse.json();
         const accessToken = longToken.access_token ?? shortToken.access_token;

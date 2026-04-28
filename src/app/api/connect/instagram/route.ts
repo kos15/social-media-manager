@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerUser } from '@/lib/supabase/get-user';
+import { getPlatformCredential } from '@/lib/platform-credentials';
 import { cookies } from 'next/headers';
 import { getAppUrl } from '@/lib/utils';
 
@@ -11,9 +12,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    const clientId = process.env.INSTAGRAM_CLIENT_ID;
-    if (!clientId) {
-        return NextResponse.json({ error: 'Instagram OAuth not configured. Set INSTAGRAM_CLIENT_ID in .env' }, { status: 500 });
+    const creds = await getPlatformCredential('INSTAGRAM');
+    if (!creds || !creds.clientId) {
+        return NextResponse.redirect(new URL('/settings?error=instagram_not_configured', request.url));
     }
 
     const state = crypto.randomUUID();
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
     const scope = 'user_profile,user_media';
 
     const url = new URL('https://api.instagram.com/oauth/authorize');
-    url.searchParams.set('client_id', clientId);
+    url.searchParams.set('client_id', creds.clientId);
     url.searchParams.set('redirect_uri', callbackUrl);
     url.searchParams.set('scope', scope);
     url.searchParams.set('response_type', 'code');
