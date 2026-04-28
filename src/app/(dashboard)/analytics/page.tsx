@@ -42,8 +42,8 @@ export default function AnalyticsPage() {
                 </div>
                 <div className="bg-surface-elevated border border-border rounded-xl p-6 min-h-[400px] flex flex-col">
                     <h3 className="font-semibold text-lg mb-4">Top Performing Posts</h3>
-                    <div className="flex-1 overflow-y-auto">
-                        <table className="w-full text-sm text-left">
+                    <div className="flex-1 overflow-x-auto overflow-y-auto">
+                        <table className="w-full text-sm text-left min-w-[400px]">
                             <thead className="text-xs text-text-secondary uppercase bg-surface">
                                 <tr>
                                     <th className="px-4 py-3 rounded-l-lg">Post</th>

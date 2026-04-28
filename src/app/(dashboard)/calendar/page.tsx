@@ -81,7 +81,7 @@ export default function CalendarPage() {
   });
 
   return (
-    <div className="space-y-6 flex flex-col h-[calc(100vh-8rem)]">
+    <div className="space-y-4 flex flex-col min-h-[600px] md:h-[calc(100vh-8rem)]">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Content Calendar</h1>
         {loading && (
@@ -98,7 +98,7 @@ export default function CalendarPage() {
         </div>
       )}
 
-      <div className="flex-1 bg-surface-elevated border border-border rounded-xl p-6 relative z-0">
+      <div className="flex-1 bg-surface-elevated border border-border rounded-xl p-3 md:p-6 relative z-0 min-h-[500px]">
         <style jsx global>{`
           /* ── FullCalendar base ── */
           .fc {
