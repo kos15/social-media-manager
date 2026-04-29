@@ -103,13 +103,14 @@ enum AccountStatus {
 }
 
 model PlatformCredential {
-  id           String   @id @default(cuid())
-  platform     Platform @unique
-  clientId     String
-  clientSecret String   @db.Text
+  id                 String   @id @default(cuid())
+  platform           Platform @unique
+  clientId           String
+  clientSecret       String   @db.Text
+  webhookVerifyToken String?  @db.Text
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 
