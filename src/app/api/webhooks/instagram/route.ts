@@ -1,8 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac } from "crypto";
 import prisma from "@/lib/prisma";
+import { getRedis } from "@/lib/redis";
 
 export const dynamic = "force-dynamic";
+
+// Meta's client certificate CN for mTLS verification
+// Docs: https://developers.facebook.com/docs/graph-api/webhooks/getting-started/#mtls-for-webhooks
+// NOTE: Starting March 31, 2026, Meta switches to its own CA — update MTLS_ROOT_CERT by then.
+// Vercel terminates TLS at edge so true mTLS requires a proxy (Nginx/ALB) in front.
+// When a proxy forwards the verified client cert CN, set these env vars:
+//   INSTAGRAM_WEBHOOK_MTLS=true
+//   MTLS_CLIENT_CN_HEADER=X-SSL-Client-CN   (nginx: $ssl_client_s_dn_cn)
+//
+// Nginx snippet:
+//   ssl_client_certificate /path/to/DigiCertHighAssuranceEVRootCA.crt;
+//   ssl_verify_client optional_no_ca;
+//   proxy_set_header X-SSL-Client-CN $ssl_client_s_dn_cn;
+//
+// AWS ALB: enable mutual authentication, set trust store to DigiCert root,
+//   ALB forwards X-Amzn-Mtls-Clientcert-Subject header.
+function verifyMtls(request: NextRequest): boolean {
+  if (process.env.INSTAGRAM_WEBHOOK_MTLS !== "true") return true; // opt-in
+
+  const header = process.env.MTLS_CLIENT_CN_HEADER ?? "X-SSL-Client-CN";
+  const cn = request.headers.get(header);
+  return cn === "client.webhooks.fbclientcerts.com";
+}
 
 async function verifySignature(
   request: NextRequest,
@@ -57,11 +81,37 @@ export async function GET(request: NextRequest) {
 
 // Incoming webhook events from Meta
 export async function POST(request: NextRequest) {
+  // mTLS client cert CN check (opt-in via INSTAGRAM_WEBHOOK_MTLS=true)
+  if (!verifyMtls(request)) {
+    return NextResponse.json(
+      { error: "Client certificate invalid" },
+      { status: 403 },
+    );
+  }
+
   const rawBody = await request.text();
 
   const valid = await verifySignature(request, rawBody);
   if (!valid) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
+  }
+
+  // Deduplication — Meta retries for up to 36h; use signature as stable unique key
+  // TTL of 48h ensures we cover the full retry window
+  const signature = request.headers.get("x-hub-signature-256")!;
+  const dedupKey = `ig_webhook:${signature}`;
+  try {
+    const redis = getRedis();
+    const seen = await redis.get(dedupKey);
+    if (seen) {
+      return NextResponse.json({ received: true }); // idempotent early exit
+    }
+    // Mark before processing — if we crash mid-process Meta will retry but
+    // the event won't duplicate; at-least-once is preferable to at-most-once here
+    await redis.set(dedupKey, "1", "EX", 172800); // 48h
+  } catch (redisErr) {
+    // Redis unavailable — log and proceed without dedup rather than dropping events
+    console.error("Instagram webhook dedup check failed:", redisErr);
   }
 
   let body: Record<string, unknown>;
@@ -77,7 +127,7 @@ export async function POST(request: NextRequest) {
     console.error("Instagram webhook processing error:", err);
   }
 
-  // Always return 200 quickly — Meta retries on non-2xx
+  // Always return 200 — Meta retries on non-2xx
   return NextResponse.json({ received: true });
 }
 
