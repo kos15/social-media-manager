@@ -1,93 +1,127 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerUser } from '@/lib/supabase/get-user';
-import prisma from '@/lib/prisma';
-import { cookies } from 'next/headers';
-import { getAppUrl } from '@/lib/utils';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerUser } from "@/lib/supabase/get-user";
+import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
+import { getAppUrl } from "@/lib/utils";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-    const user = await getServerUser(request);
-    if (!user) {
-        return NextResponse.redirect(new URL('/login', request.url));
+  const user = await getServerUser(request);
+  if (!user) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  const { searchParams } = new URL(request.url);
+  const code = searchParams.get("code");
+  const state = searchParams.get("state");
+  const error = searchParams.get("error_reason");
+
+  if (error) {
+    return NextResponse.redirect(
+      new URL("/accounts?error=instagram_denied", request.url),
+    );
+  }
+
+  const cookieStore = cookies();
+  const savedState = cookieStore.get("instagram_oauth_state")?.value;
+
+  if (!state || state !== savedState || !code) {
+    return NextResponse.redirect(
+      new URL("/accounts?error=instagram_invalid_state", request.url),
+    );
+  }
+
+  cookieStore.delete("instagram_oauth_state");
+
+  try {
+    // Prefer DB-stored credentials; fall back to env vars
+    const dbCred = await prisma.platformCredential.findUnique({
+      where: { platform: "INSTAGRAM" },
+      select: { clientId: true, clientSecret: true },
+    });
+    const clientId = dbCred?.clientId ?? process.env.INSTAGRAM_CLIENT_ID!;
+    const clientSecret =
+      dbCred?.clientSecret ?? process.env.INSTAGRAM_CLIENT_SECRET!;
+
+    const callbackUrl = `${getAppUrl()}/api/connect/instagram/callback`;
+
+    const formData = new FormData();
+    formData.append("client_id", clientId);
+    formData.append("client_secret", clientSecret);
+    formData.append("grant_type", "authorization_code");
+    formData.append("redirect_uri", callbackUrl);
+    formData.append("code", code);
+
+    const tokenResponse = await fetch(
+      "https://api.instagram.com/oauth/access_token",
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+
+    const shortToken = await tokenResponse.json();
+    if (!shortToken.access_token) {
+      throw new Error("Failed to obtain Instagram access token");
     }
 
-    const { searchParams } = new URL(request.url);
-    const code = searchParams.get('code');
-    const state = searchParams.get('state');
-    const error = searchParams.get('error_reason');
+    const longLivedResponse = await fetch(
+      `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${clientSecret}&access_token=${shortToken.access_token}`,
+    );
+    const longToken = await longLivedResponse.json();
+    const accessToken = longToken.access_token ?? shortToken.access_token;
 
-    if (error) {
-        return NextResponse.redirect(new URL('/accounts?error=instagram_denied', request.url));
+    const userResponse = await fetch(
+      `https://graph.instagram.com/me?fields=id,username,profile_picture_url&access_token=${accessToken}`,
+    );
+    const igUser = await userResponse.json();
+
+    await prisma.socialAccount.upsert({
+      where: {
+        platform_platformId: { platform: "INSTAGRAM", platformId: igUser.id },
+      },
+      update: {
+        username: `@${igUser.username}`,
+        profileImage: igUser.profile_picture_url,
+        accessToken,
+        refreshToken: null,
+        expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+        status: "ACTIVE",
+        userId: user.id,
+      },
+      create: {
+        platform: "INSTAGRAM",
+        platformId: igUser.id,
+        username: `@${igUser.username}`,
+        profileImage: igUser.profile_picture_url,
+        accessToken,
+        refreshToken: null,
+        expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+        status: "ACTIVE",
+        userId: user.id,
+      },
+    });
+
+    // Subscribe to webhook fields so Meta sends events to our endpoint
+    const subscribeRes = await fetch(
+      `https://graph.instagram.com/me/subscribed_apps?subscribed_fields=comments,mentions,messages,message_reactions,story_insights&access_token=${accessToken}`,
+      { method: "POST" },
+    );
+    if (!subscribeRes.ok) {
+      console.warn(
+        "Instagram webhook subscription failed:",
+        await subscribeRes.text(),
+      );
     }
 
-    const cookieStore = cookies();
-    const savedState = cookieStore.get('instagram_oauth_state')?.value;
-
-    if (!state || state !== savedState || !code) {
-        return NextResponse.redirect(new URL('/accounts?error=instagram_invalid_state', request.url));
-    }
-
-    cookieStore.delete('instagram_oauth_state');
-
-    try {
-        const callbackUrl = `${getAppUrl()}/api/connect/instagram/callback`;
-
-        const formData = new FormData();
-        formData.append('client_id', process.env.INSTAGRAM_CLIENT_ID!);
-        formData.append('client_secret', process.env.INSTAGRAM_CLIENT_SECRET!);
-        formData.append('grant_type', 'authorization_code');
-        formData.append('redirect_uri', callbackUrl);
-        formData.append('code', code);
-
-        const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
-            method: 'POST',
-            body: formData,
-        });
-
-        const shortToken = await tokenResponse.json();
-        if (!shortToken.access_token) {
-            throw new Error('Failed to obtain Instagram access token');
-        }
-
-        const longLivedResponse = await fetch(
-            `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}&access_token=${shortToken.access_token}`
-        );
-        const longToken = await longLivedResponse.json();
-        const accessToken = longToken.access_token ?? shortToken.access_token;
-
-        const userResponse = await fetch(
-            `https://graph.instagram.com/me?fields=id,username,profile_picture_url&access_token=${accessToken}`
-        );
-        const igUser = await userResponse.json();
-
-        await prisma.socialAccount.upsert({
-            where: { platform_platformId: { platform: 'INSTAGRAM', platformId: igUser.id } },
-            update: {
-                username: `@${igUser.username}`,
-                profileImage: igUser.profile_picture_url,
-                accessToken,
-                refreshToken: null,
-                expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-                status: 'ACTIVE',
-                userId: user.id,
-            },
-            create: {
-                platform: 'INSTAGRAM',
-                platformId: igUser.id,
-                username: `@${igUser.username}`,
-                profileImage: igUser.profile_picture_url,
-                accessToken,
-                refreshToken: null,
-                expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-                status: 'ACTIVE',
-                userId: user.id,
-            },
-        });
-
-        return NextResponse.redirect(new URL('/accounts?success=instagram', request.url));
-    } catch (err) {
-        console.error('Instagram OAuth error:', err);
-        return NextResponse.redirect(new URL('/accounts?error=instagram_failed', request.url));
-    }
+    return NextResponse.redirect(
+      new URL("/accounts?success=instagram", request.url),
+    );
+  } catch (err) {
+    console.error("Instagram OAuth error:", err);
+    return NextResponse.redirect(
+      new URL("/accounts?error=instagram_failed", request.url),
+    );
+  }
 }
