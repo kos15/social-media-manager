@@ -36,10 +36,14 @@ export async function GET(request: NextRequest) {
 
   const callbackUrl = `${getAppUrl()}/api/connect/instagram/callback`;
 
-  const url = new URL("https://api.instagram.com/oauth/authorize");
+  // Instagram Login (Business Login for Instagram) — replaces deprecated Basic Display API (killed Sep 2024)
+  const url = new URL("https://www.instagram.com/oauth/authorize");
   url.searchParams.set("client_id", clientId);
   url.searchParams.set("redirect_uri", callbackUrl);
-  url.searchParams.set("scope", "user_profile,user_media");
+  url.searchParams.set(
+    "scope",
+    "instagram_business_basic,instagram_business_content_publish,instagram_business_manage_messages,instagram_business_manage_comments",
+  );
   url.searchParams.set("response_type", "code");
   url.searchParams.set("state", state);
 
