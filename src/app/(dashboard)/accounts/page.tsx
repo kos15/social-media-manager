@@ -1,331 +1,798 @@
 "use client";
 
 import { Suspense, useState, useEffect, useCallback } from "react";
-import { Twitter, Linkedin, Instagram, Youtube, ExternalLink, Unplug, Plus, AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import {
+  Plus,
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  MoreVertical,
+  ExternalLink,
+} from "lucide-react";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 interface SocialAccount {
-    id: string;
-    platform: "TWITTER" | "LINKEDIN" | "INSTAGRAM" | "YOUTUBE";
-    username: string;
-    profileImage?: string;
-    status: "ACTIVE" | "EXPIRED" | "DISCONNECTED";
-    expiresAt?: string;
-    createdAt: string;
+  id: string;
+  platform: "TWITTER" | "LINKEDIN" | "INSTAGRAM" | "YOUTUBE";
+  username: string;
+  profileImage?: string;
+  status: "ACTIVE" | "EXPIRED" | "DISCONNECTED";
+  expiresAt?: string;
+  createdAt: string;
 }
 
-const platformConfig = {
-    TWITTER: {
-        name: "Twitter / X",
-        icon: Twitter,
-        color: "text-[#1DA1F2]",
-        bgColor: "bg-[#1DA1F2]/10",
-        connectUrl: "/api/connect/twitter",
-        envKey: "TWITTER_CLIENT_ID",
-    },
-    LINKEDIN: {
-        name: "LinkedIn",
-        icon: Linkedin,
-        color: "text-[#0A66C2]",
-        bgColor: "bg-[#0A66C2]/10",
-        connectUrl: "/api/connect/linkedin",
-        envKey: "LINKEDIN_CLIENT_ID",
-    },
-    INSTAGRAM: {
-        name: "Instagram",
-        icon: Instagram,
-        color: "text-[#E1306C]",
-        bgColor: "bg-[#E1306C]/10",
-        connectUrl: "/api/connect/instagram",
-        envKey: "INSTAGRAM_CLIENT_ID",
-    },
-    YOUTUBE: {
-        name: "YouTube",
-        icon: Youtube,
-        color: "text-[#FF0000]",
-        bgColor: "bg-[#FF0000]/10",
-        connectUrl: "/api/connect/youtube",
-        envKey: "GOOGLE_CLIENT_ID",
-    },
+const PLATFORM_CONFIG = {
+  TWITTER: {
+    name: "X / Twitter",
+    glyph: "𝕏",
+    connectUrl: "/api/connect/twitter",
+    envKey: "TWITTER_CLIENT_ID",
+  },
+  LINKEDIN: {
+    name: "LinkedIn",
+    glyph: "in",
+    connectUrl: "/api/connect/linkedin",
+    envKey: "LINKEDIN_CLIENT_ID",
+  },
+  INSTAGRAM: {
+    name: "Instagram",
+    glyph: "Ig",
+    connectUrl: "/api/connect/instagram",
+    envKey: "INSTAGRAM_CLIENT_ID",
+  },
+  YOUTUBE: {
+    name: "YouTube",
+    glyph: "▶",
+    connectUrl: "/api/connect/youtube",
+    envKey: "GOOGLE_CLIENT_ID",
+  },
 } as const;
 
-function Toast({ message, type }: { message: string; type: "success" | "error" }) {
-    return (
-        <div className={`fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium transition-all ${type === "success" ? "bg-success/10 text-success border border-success/20" : "bg-error/10 text-error border border-error/20"}`}>
-            {type === "success" ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-            {message}
-        </div>
-    );
+function Glyph({
+  g,
+  active,
+  size = 32,
+}: {
+  g: string;
+  active: boolean;
+  size?: number;
+}) {
+  return (
+    <span
+      style={{
+        width: size,
+        height: size,
+        borderRadius: 4,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: active ? "var(--ink)" : "var(--paper-2)",
+        color: active ? "var(--paper)" : "var(--ink-2)",
+        border: `1px solid ${active ? "var(--ink)" : "var(--rule)"}`,
+        fontFamily: "var(--font-mono)",
+        fontSize: size * 0.38,
+        fontWeight: 600,
+        flexShrink: 0,
+      }}
+    >
+      {g}
+    </span>
+  );
 }
 
 function AccountsContent() {
-    const [accounts, setAccounts] = useState<SocialAccount[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [disconnecting, setDisconnecting] = useState<string | null>(null);
-    const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
-    const searchParams = useSearchParams();
+  const [accounts, setAccounts] = useState<SocialAccount[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [disconnecting, setDisconnecting] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+  const searchParams = useSearchParams();
 
-    const showToast = (message: string, type: "success" | "error") => {
-        setToast({ message, type });
-        setTimeout(() => setToast(null), 4000);
-    };
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
 
-    const fetchAccounts = useCallback(async () => {
-        setIsLoading(true);
-        try {
-            const res = await fetch("/api/accounts");
-            if (!res.ok) {
-                // Silently fail if DB isn't configured — show empty state
-                setAccounts([]);
-                return;
-            }
-            const data = await res.json();
-            setAccounts(data);
-        } catch {
-            // Silently show empty state if DB isn't connected
-            setAccounts([]);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+  const fetchAccounts = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/accounts");
+      if (!res.ok) {
+        setAccounts([]);
+        return;
+      }
+      const data = await res.json();
+      setAccounts(data);
+    } catch {
+      setAccounts([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-    useEffect(() => {
-        fetchAccounts();
+  useEffect(() => {
+    fetchAccounts();
+    const success = searchParams.get("success");
+    const error = searchParams.get("error");
+    if (success) {
+      const platform =
+        PLATFORM_CONFIG[success.toUpperCase() as keyof typeof PLATFORM_CONFIG];
+      showToast(`Connected ${platform?.name ?? success}`, "success");
+    } else if (error) {
+      const messages: Record<string, string> = {
+        twitter_denied: "Twitter connection was denied.",
+        linkedin_denied: "LinkedIn connection was denied.",
+        instagram_denied: "Instagram connection was denied.",
+        youtube_denied: "YouTube connection was denied.",
+        twitter_failed: "Twitter connection failed. Check your API keys.",
+        linkedin_failed: "LinkedIn connection failed. Check your API keys.",
+        instagram_failed: "Instagram connection failed. Check your API keys.",
+        youtube_failed: "YouTube connection failed. Check your API keys.",
+      };
+      showToast(messages[error] ?? `Connection error: ${error}`, "error");
+    }
+  }, [fetchAccounts, searchParams]);
 
-        // Handle OAuth callback status messages
-        const success = searchParams.get("success");
-        const error = searchParams.get("error");
-        if (success) {
-            const platform = platformConfig[success.toUpperCase() as keyof typeof platformConfig];
-            showToast(`Successfully connected ${platform?.name ?? success}!`, "success");
-        } else if (error) {
-            const messages: Record<string, string> = {
-                twitter_denied: "Twitter connection was denied.",
-                linkedin_denied: "LinkedIn connection was denied.",
-                instagram_denied: "Instagram connection was denied.",
-                youtube_denied: "YouTube connection was denied.",
-                twitter_failed: "Twitter connection failed. Check your API keys.",
-                linkedin_failed: "LinkedIn connection failed. Check your API keys.",
-                instagram_failed: "Instagram connection failed. Check your API keys.",
-                youtube_failed: "YouTube connection failed. Check your API keys.",
-                twitter_invalid_state: "Twitter OAuth state mismatch. Please try again.",
-                linkedin_invalid_state: "LinkedIn OAuth state mismatch. Please try again.",
-                instagram_invalid_state: "Instagram OAuth state mismatch. Please try again.",
-                youtube_invalid_state: "YouTube OAuth state mismatch. Please try again.",
-            };
-            showToast(messages[error] ?? `Connection error: ${error}`, "error");
-        }
-    }, [fetchAccounts, searchParams]);
+  const handleDisconnect = async (id: string) => {
+    setDisconnecting(id);
+    try {
+      const res = await fetch(`/api/accounts?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setAccounts((prev) => prev.filter((a) => a.id !== id));
+      showToast("Account disconnected.", "success");
+    } catch {
+      showToast("Failed to disconnect.", "error");
+    } finally {
+      setDisconnecting(null);
+    }
+  };
 
-    const handleDisconnect = async (id: string) => {
-        setDisconnecting(id);
-        try {
-            const res = await fetch(`/api/accounts?id=${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error();
-            setAccounts(prev => prev.filter(a => a.id !== id));
-            showToast("Account disconnected successfully.", "success");
-        } catch {
-            showToast("Failed to disconnect account.", "error");
-        } finally {
-            setDisconnecting(null);
-        }
-    };
+  const connectedPlatforms = new Set(accounts.map((a) => a.platform));
+  const unconnected = (
+    Object.keys(PLATFORM_CONFIG) as Array<keyof typeof PLATFORM_CONFIG>
+  ).filter((p) => !connectedPlatforms.has(p));
+  const isExpired = (a: SocialAccount) =>
+    a.expiresAt && new Date(a.expiresAt) < new Date();
+  const expiredAccounts = accounts.filter((a) => isExpired(a));
+  const activeAccounts = accounts.filter((a) => !isExpired(a));
 
-    const connectedPlatforms = new Set(accounts.map(a => a.platform));
-    const unconnectedPlatforms = (Object.keys(platformConfig) as Array<keyof typeof platformConfig>).filter(
-        p => !connectedPlatforms.has(p)
-    );
-
-    const isExpired = (account: SocialAccount) =>
-        account.expiresAt && new Date(account.expiresAt) < new Date();
-
-    return (
-        <div className="space-y-6">
-            {toast && <Toast message={toast.message} type={toast.type} />}
-
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Connected Accounts</h1>
-                    <p className="text-sm text-text-secondary mt-1">
-                        Connect your social media accounts to start publishing and scheduling posts.
-                    </p>
-                </div>
-                <button
-                    onClick={fetchAccounts}
-                    className="p-2 text-text-secondary hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors"
-                    title="Refresh accounts"
-                >
-                    <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-                </button>
-            </div>
-
-            {/* Connected Accounts Grid */}
-            {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[...Array(3)].map((_, i) => (
-                        <div key={i} className="bg-surface-elevated border border-border rounded-xl p-6 animate-pulse">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 rounded-full bg-surface" />
-                                <div className="space-y-2">
-                                    <div className="h-4 w-24 bg-surface rounded" />
-                                    <div className="h-3 w-16 bg-surface rounded" />
-                                </div>
-                            </div>
-                            <div className="h-8 bg-surface rounded mt-6" />
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <>
-                    {accounts.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {accounts.map((account) => {
-                                const config = platformConfig[account.platform];
-                                const expired = isExpired(account);
-                                return (
-                                    <div key={account.id} className="bg-surface-elevated border border-border rounded-xl p-6 flex flex-col relative group">
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                {account.profileImage ? (
-                                                    <div className="relative w-10 h-10 rounded-full overflow-hidden border border-border">
-                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                        <img
-                                                            src={account.profileImage}
-                                                            alt={account.username}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    <div className={`w-10 h-10 rounded-full ${config.bgColor} flex items-center justify-center ${config.color}`}>
-                                                        <config.icon className="w-5 h-5" />
-                                                    </div>
-                                                )}
-                                                <div>
-                                                    <h3 className="font-semibold">{config.name}</h3>
-                                                    <p className="text-sm text-text-secondary">{account.username}</p>
-                                                </div>
-                                            </div>
-                                            <span className={`px-2 py-1 text-[10px] uppercase tracking-wider font-semibold rounded-full ${expired
-                                                ? "bg-warning/10 text-warning"
-                                                : "bg-success/10 text-success"
-                                                }`}>
-                                                {expired ? "Expired" : account.status}
-                                            </span>
-                                        </div>
-
-                                        {expired && (
-                                            <div className="flex items-center gap-2 text-xs text-warning bg-warning/5 border border-warning/20 rounded-lg px-3 py-2 mb-4">
-                                                <AlertCircle className="w-3 h-3 shrink-0" />
-                                                Token expired. Reconnect to continue posting.
-                                            </div>
-                                        )}
-
-                                        <div className="mt-auto pt-4 flex justify-between items-center border-t border-border">
-                                            {expired ? (
-                                                <a
-                                                    href={config.connectUrl}
-                                                    className="text-sm text-primary hover:text-primary-hover font-medium flex items-center gap-1 transition-colors"
-                                                >
-                                                    Reconnect <ExternalLink className="w-3 h-3" />
-                                                </a>
-                                            ) : (
-                                                <a
-                                                    href={`https://${account.platform.toLowerCase()}.com`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-sm text-primary hover:text-primary-hover font-medium flex items-center gap-1 transition-colors"
-                                                >
-                                                    View Profile <ExternalLink className="w-3 h-3" />
-                                                </a>
-                                            )}
-                                            <button
-                                                onClick={() => handleDisconnect(account.id)}
-                                                disabled={disconnecting === account.id}
-                                                className="p-2 text-text-secondary hover:text-error hover:bg-error/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100 disabled:cursor-not-allowed"
-                                                aria-label="Disconnect account"
-                                            >
-                                                {disconnecting === account.id
-                                                    ? <RefreshCw className="w-4 h-4 animate-spin" />
-                                                    : <Unplug className="w-4 h-4" />
-                                                }
-                                            </button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-
-                    {/* Connect New Platforms */}
-                    {unconnectedPlatforms.length > 0 && (
-                        <div>
-                            <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-4">
-                                {accounts.length === 0 ? "Get Started — Connect a Platform" : "Add More Platforms"}
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                {unconnectedPlatforms.map((platform) => {
-                                    const config = platformConfig[platform];
-                                    return (
-                                        <a
-                                            key={platform}
-                                            href={config.connectUrl}
-                                            className="group bg-surface-elevated border-2 border-dashed border-border hover:border-primary/40 rounded-xl p-6 flex flex-col items-center justify-center gap-3 transition-all hover:bg-surface hover:shadow-sm"
-                                        >
-                                            <div className={`w-12 h-12 rounded-full ${config.bgColor} flex items-center justify-center ${config.color} transition-transform group-hover:scale-110`}>
-                                                <config.icon className="w-6 h-6" />
-                                            </div>
-                                            <div className="text-center">
-                                                <p className="font-medium text-sm">{config.name}</p>
-                                                <p className="text-xs text-text-secondary mt-0.5 flex items-center gap-1 justify-center">
-                                                    <Plus className="w-3 h-3" /> Connect
-                                                </p>
-                                            </div>
-                                        </a>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    {accounts.length === 0 && unconnectedPlatforms.length === 0 && (
-                        <div className="text-center py-16 text-text-secondary">
-                            <CheckCircle className="w-12 h-12 mx-auto mb-4 text-success" />
-                            <p className="font-medium">All platforms connected!</p>
-                        </div>
-                    )}
-                </>
-            )}
-
-            {/* Setup Instructions */}
-            <div className="bg-surface-elevated border border-border rounded-xl p-6">
-                <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-primary" />
-                    API Keys Setup Required
-                </h3>
-                <p className="text-sm text-text-secondary mb-4">
-                    To enable real OAuth connections, add these keys to your <code className="bg-surface px-1 py-0.5 rounded text-xs">.env</code> file and
-                    register your app&apos;s callback URLs in each platform&apos;s developer portal.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                    {Object.entries(platformConfig).map(([key, config]) => (
-                        <div key={key} className="bg-surface rounded-lg p-3 border border-border">
-                            <p className={`font-semibold mb-1 ${config.color}`}>{config.name}</p>
-                            <p className="text-text-secondary">{config.envKey}=your_key</p>
-                            <p className="text-text-secondary mt-1 text-[10px] break-all">
-                                Callback: {typeof window !== 'undefined' ? window.location.origin : ''}{config.connectUrl.replace('/api/connect/', '/api/connect/')}/callback
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            </div>
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
+      {/* Toast */}
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            top: 24,
+            right: 24,
+            zIndex: 50,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "10px 16px",
+            borderRadius: 8,
+            boxShadow: "var(--shadow-md)",
+            fontSize: 13,
+            fontWeight: 500,
+            background:
+              toast.type === "success"
+                ? "var(--sp-positive-soft)"
+                : "var(--sp-warn-soft)",
+            color:
+              toast.type === "success"
+                ? "var(--sp-positive)"
+                : "var(--sp-warn)",
+            border: `1px solid ${toast.type === "success" ? "var(--sp-positive)" : "var(--sp-warn)"}`,
+          }}
+        >
+          {toast.type === "success" ? (
+            <CheckCircle style={{ width: 15, height: 15 }} />
+          ) : (
+            <AlertTriangle style={{ width: 15, height: 15 }} />
+          )}
+          {toast.message}
         </div>
-    );
+      )}
+
+      <PageHeader
+        crumb="Workspace · Settings"
+        title="Accounts"
+        actions={
+          <>
+            <button onClick={fetchAccounts} className="sp-btn sp-btn-ghost">
+              <RefreshCw
+                style={{
+                  width: 13,
+                  height: 13,
+                  ...(isLoading
+                    ? { animation: "spin 1s linear infinite" }
+                    : {}),
+                }}
+              />
+            </button>
+            <a
+              href={
+                unconnected[0]
+                  ? PLATFORM_CONFIG[unconnected[0]].connectUrl
+                  : "#"
+              }
+              className="sp-btn sp-btn-primary"
+              style={{ textDecoration: "none" }}
+            >
+              <Plus style={{ width: 13, height: 13 }} /> Connect new
+            </a>
+          </>
+        }
+      />
+
+      <div
+        style={{
+          flex: 1,
+          overflow: "auto",
+          padding: "var(--pad-3) var(--pad-4)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--gap-3)",
+        }}
+      >
+        {/* Editorial header */}
+        <div
+          style={{
+            paddingBottom: "var(--gap-2)",
+            borderBottom: "1px solid var(--rule)",
+            display: "grid",
+            gridTemplateColumns: "1.4fr 1fr",
+            gap: "var(--gap-3)",
+            alignItems: "end",
+          }}
+          className="responsive-stack"
+        >
+          <div>
+            <div className="eyebrow" style={{ paddingBottom: 8 }}>
+              {accounts.length} platforms · {activeAccounts.length} active
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(24px, 3vw, 36px)",
+                lineHeight: 1.1,
+              }}
+            >
+              Where you publish.
+            </div>
+          </div>
+          <div
+            style={{ fontSize: 12.5, color: "var(--ink-2)", lineHeight: 1.6 }}
+          >
+            Connect each platform once. We refresh tokens automatically and warn
+            you a week before they expire.
+            {expiredAccounts.length > 0 && (
+              <>
+                {" "}
+                <strong style={{ color: "var(--sp-warn)" }}>
+                  {expiredAccounts
+                    .map((a) => PLATFORM_CONFIG[a.platform].name)
+                    .join(", ")}{" "}
+                  need{expiredAccounts.length === 1 ? "s" : ""} attention now.
+                </strong>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Expired callouts */}
+        {expiredAccounts.map((a) => {
+          const cfg = PLATFORM_CONFIG[a.platform];
+          return (
+            <div
+              key={a.id}
+              style={{
+                padding: "var(--pad-2)",
+                border: "1px solid var(--rule)",
+                borderLeft: "3px solid var(--sp-warn)",
+                borderRadius: 8,
+                background: "var(--sp-warn-soft)",
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--gap-2)",
+                flexWrap: "wrap",
+              }}
+            >
+              <AlertTriangle
+                style={{
+                  width: 18,
+                  height: 18,
+                  color: "var(--sp-warn)",
+                  flexShrink: 0,
+                }}
+              />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 500 }}>
+                  {cfg.name} token expired
+                </div>
+                <div
+                  style={{
+                    fontSize: 11.5,
+                    color: "var(--ink-3)",
+                    marginTop: 2,
+                  }}
+                >
+                  Posts to{" "}
+                  <span style={{ fontFamily: "var(--font-mono)" }}>
+                    {a.username}
+                  </span>{" "}
+                  are paused until you reconnect.
+                </div>
+              </div>
+              <a
+                href={cfg.connectUrl}
+                className="sp-btn"
+                style={{ textDecoration: "none", flexShrink: 0 }}
+              >
+                Reconnect {cfg.name}
+              </a>
+            </div>
+          );
+        })}
+
+        {/* Loading skeleton */}
+        {isLoading && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              border: "1px solid var(--rule)",
+              borderRadius: 8,
+              overflow: "hidden",
+            }}
+          >
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                style={{
+                  padding: "14px var(--pad-2)",
+                  background: "var(--paper)",
+                  borderBottom: "1px solid var(--rule)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                }}
+              >
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 4,
+                    background: "var(--paper-3)",
+                  }}
+                />
+                <div
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 6,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 120,
+                      height: 13,
+                      background: "var(--paper-3)",
+                      borderRadius: 4,
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: 80,
+                      height: 11,
+                      background: "var(--paper-3)",
+                      borderRadius: 4,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Connected accounts list */}
+        {!isLoading && accounts.length > 0 && (
+          <div>
+            <div className="eyebrow" style={{ marginBottom: "var(--gap-1)" }}>
+              Connected
+            </div>
+            <div
+              style={{
+                border: "1px solid var(--rule)",
+                borderRadius: 8,
+                overflow: "hidden",
+              }}
+            >
+              {activeAccounts.map((a, i) => {
+                const cfg = PLATFORM_CONFIG[a.platform];
+                const since = new Date(a.createdAt).toLocaleDateString(
+                  "en-US",
+                  { month: "short", day: "numeric", year: "numeric" },
+                );
+                return (
+                  <div
+                    key={a.id}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "42px 1fr 120px 80px",
+                      alignItems: "center",
+                      padding: "14px var(--pad-2)",
+                      borderTop: i ? "1px solid var(--rule)" : "none",
+                      gap: 14,
+                    }}
+                    className="account-row"
+                  >
+                    <Glyph g={cfg.glyph} active size={32} />
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500 }}>
+                        {cfg.name}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: 11,
+                          color: "var(--ink-3)",
+                        }}
+                      >
+                        {a.username}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="eyebrow" style={{ fontSize: 9 }}>
+                        Since
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: 11,
+                          color: "var(--ink-2)",
+                        }}
+                      >
+                        {since}
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: 10,
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          color: "var(--sp-positive)",
+                        }}
+                      >
+                        ● Active
+                      </span>
+                      <button
+                        onClick={() => handleDisconnect(a.id)}
+                        disabled={disconnecting === a.id}
+                        className="sp-btn sp-btn-ghost"
+                        style={{ padding: 4 }}
+                        title="Disconnect"
+                      >
+                        {disconnecting === a.id ? (
+                          <RefreshCw
+                            style={{
+                              width: 13,
+                              height: 13,
+                              animation: "spin 1s linear infinite",
+                            }}
+                          />
+                        ) : (
+                          <MoreVertical style={{ width: 13, height: 13 }} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Reconnect expired */}
+        {!isLoading && expiredAccounts.length > 0 && (
+          <div>
+            <div className="eyebrow" style={{ marginBottom: "var(--gap-1)" }}>
+              Reconnect
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--gap-1)",
+              }}
+            >
+              {expiredAccounts.map((a) => {
+                const cfg = PLATFORM_CONFIG[a.platform];
+                return (
+                  <div
+                    key={a.id}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "42px 1fr auto auto",
+                      alignItems: "center",
+                      padding: "14px var(--pad-2)",
+                      border: "1px dashed var(--rule-2)",
+                      borderRadius: 8,
+                      gap: 14,
+                      background: "var(--paper-2)",
+                    }}
+                    className="account-row"
+                  >
+                    <Glyph g={cfg.glyph} active={false} size={32} />
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500 }}>
+                        {cfg.name}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: 11,
+                          color: "var(--ink-3)",
+                        }}
+                      >
+                        {a.username}
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 10,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: "var(--sp-warn)",
+                      }}
+                    >
+                      ● Expired
+                    </span>
+                    <a
+                      href={cfg.connectUrl}
+                      className="sp-btn sp-btn-primary"
+                      style={{
+                        textDecoration: "none",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 4,
+                      }}
+                    >
+                      Reconnect{" "}
+                      <ExternalLink style={{ width: 11, height: 11 }} />
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Connect new platforms */}
+        {!isLoading && unconnected.length > 0 && (
+          <div>
+            <div className="eyebrow" style={{ marginBottom: "var(--gap-1)" }}>
+              {accounts.length === 0
+                ? "Get started — connect a platform"
+                : "Add more platforms"}
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                gap: "var(--gap-1)",
+              }}
+            >
+              {unconnected.map((platform) => {
+                const cfg = PLATFORM_CONFIG[platform];
+                return (
+                  <a
+                    key={platform}
+                    href={cfg.connectUrl}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      padding: "14px var(--pad-2)",
+                      border: "1px dashed var(--rule)",
+                      borderRadius: 8,
+                      textDecoration: "none",
+                      transition: "all 0.1s",
+                      background: "var(--paper)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "var(--ink-3)";
+                      e.currentTarget.style.background = "var(--paper-2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "var(--rule)";
+                      e.currentTarget.style.background = "var(--paper)";
+                    }}
+                  >
+                    <Glyph g={cfg.glyph} active={false} size={32} />
+                    <div>
+                      <div
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 500,
+                          color: "var(--ink)",
+                        }}
+                      >
+                        {cfg.name}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          color: "var(--ink-3)",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 4,
+                        }}
+                      >
+                        <Plus style={{ width: 10, height: 10 }} /> Connect
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* OAuth credentials info */}
+        <div className="sp-card" style={{ padding: "var(--pad-2)" }}>
+          <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+            <div
+              style={{
+                padding: 8,
+                border: "1px solid var(--rule)",
+                borderRadius: 6,
+                flexShrink: 0,
+              }}
+            >
+              <Info style={{ width: 14, height: 14, color: "var(--ink-3)" }} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: 18,
+                  marginBottom: 4,
+                }}
+              >
+                OAuth credentials
+              </div>
+              <div
+                style={{
+                  fontSize: 12.5,
+                  color: "var(--ink-2)",
+                  lineHeight: 1.55,
+                  marginBottom: 12,
+                }}
+              >
+                For self-hosted deployments, register your callback URLs in each
+                platform&apos;s developer portal and add the keys to your{" "}
+                <code
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    background: "var(--paper-2)",
+                    padding: "1px 5px",
+                    borderRadius: 3,
+                    border: "1px solid var(--rule)",
+                  }}
+                >
+                  .env
+                </code>{" "}
+                file.
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                  gap: "var(--gap-1)",
+                }}
+              >
+                {(
+                  Object.entries(PLATFORM_CONFIG) as [
+                    keyof typeof PLATFORM_CONFIG,
+                    (typeof PLATFORM_CONFIG)[keyof typeof PLATFORM_CONFIG],
+                  ][]
+                ).map(([key, cfg]) => (
+                  <div
+                    key={key}
+                    style={{
+                      padding: "10px 12px",
+                      border: "1px solid var(--rule)",
+                      borderRadius: 6,
+                      background: "var(--paper-2)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                    }}
+                  >
+                    <Glyph g={cfg.glyph} active size={18} />
+                    <span
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 11,
+                        color: "var(--ink-2)",
+                      }}
+                    >
+                      {cfg.envKey}=
+                      <span style={{ color: "var(--ink-3)" }}>•••••••••</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @media (max-width: 900px) {
+          .responsive-stack {
+            grid-template-columns: 1fr !important;
+          }
+          .account-row {
+            grid-template-columns: 42px 1fr !important;
+          }
+          .account-row > *:nth-child(3),
+          .account-row > *:nth-child(4) {
+            display: none;
+          }
+        }
+      `}</style>
+    </div>
+  );
 }
 
 export default function AccountsPage() {
-    return (
-        <Suspense fallback={<div className="flex items-center justify-center h-64 text-text-secondary">Loading accounts...</div>}>
-            <AccountsContent />
-        </Suspense>
-    );
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            color: "var(--ink-3)",
+            fontSize: 13,
+          }}
+        >
+          Loading accounts…
+        </div>
+      }
+    >
+      <AccountsContent />
+    </Suspense>
+  );
 }

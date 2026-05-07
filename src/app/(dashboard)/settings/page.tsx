@@ -2,10 +2,6 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import {
-  Twitter,
-  Linkedin,
-  Instagram,
-  Youtube,
   CheckCircle,
   AlertCircle,
   Trash2,
@@ -19,6 +15,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 type Platform = "TWITTER" | "LINKEDIN" | "INSTAGRAM" | "YOUTUBE";
 
@@ -40,13 +37,17 @@ interface FormState {
   error: string | null;
 }
 
+const GLYPH_MAP: Record<Platform, string> = {
+  TWITTER: "𝕏",
+  LINKEDIN: "in",
+  INSTAGRAM: "Ig",
+  YOUTUBE: "▶",
+};
+
 const PLATFORM_CONFIG: Record<
   Platform,
   {
     name: string;
-    icon: React.ElementType;
-    color: string;
-    bgColor: string;
     devUrl: string;
     callbackPath: string;
     fields: {
@@ -59,10 +60,7 @@ const PLATFORM_CONFIG: Record<
   }
 > = {
   TWITTER: {
-    name: "Twitter / X",
-    icon: Twitter,
-    color: "text-[#1DA1F2]",
-    bgColor: "bg-[#1DA1F2]/10",
+    name: "X / Twitter",
     devUrl: "https://developer.x.com/en/portal/dashboard",
     callbackPath: "/api/connect/twitter/callback",
     fields: [
@@ -84,9 +82,6 @@ const PLATFORM_CONFIG: Record<
   },
   LINKEDIN: {
     name: "LinkedIn",
-    icon: Linkedin,
-    color: "text-[#0A66C2]",
-    bgColor: "bg-[#0A66C2]/10",
     devUrl: "https://www.linkedin.com/developers/apps",
     callbackPath: "/api/connect/linkedin/callback",
     fields: [
@@ -108,9 +103,6 @@ const PLATFORM_CONFIG: Record<
   },
   INSTAGRAM: {
     name: "Instagram",
-    icon: Instagram,
-    color: "text-[#E1306C]",
-    bgColor: "bg-[#E1306C]/10",
     devUrl: "https://developers.facebook.com/apps",
     callbackPath: "/api/connect/instagram/callback",
     fields: [
@@ -132,9 +124,6 @@ const PLATFORM_CONFIG: Record<
   },
   YOUTUBE: {
     name: "YouTube",
-    icon: Youtube,
-    color: "text-[#FF0000]",
-    bgColor: "bg-[#FF0000]/10",
     devUrl: "https://console.cloud.google.com/apis/credentials",
     callbackPath: "/api/connect/youtube/callback",
     fields: [
@@ -168,6 +157,19 @@ const defaultFormState = (): FormState => ({
   error: null,
 });
 
+const inputStyle = {
+  width: "100%",
+  padding: "10px 14px",
+  borderRadius: 6,
+  border: "1px solid var(--rule)",
+  background: "var(--paper)",
+  color: "var(--ink)",
+  fontSize: 13,
+  outline: "none",
+  fontFamily: "var(--font-mono)",
+  boxSizing: "border-box" as const,
+};
+
 function Toast({
   message,
   type,
@@ -180,12 +182,32 @@ function Toast({
   return (
     <div
       onClick={onDismiss}
-      className={`fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium cursor-pointer transition-all ${type === "success" ? "bg-success/10 text-success border border-success/20" : "bg-error/10 text-error border border-error/20"}`}
+      style={{
+        position: "fixed",
+        top: 24,
+        right: 24,
+        zIndex: 50,
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "12px 16px",
+        borderRadius: 8,
+        background:
+          type === "success"
+            ? "var(--sp-positive-soft)"
+            : "var(--sp-warn-soft)",
+        border: `1px solid ${type === "success" ? "var(--sp-positive)" : "var(--sp-warn)"}`,
+        color: type === "success" ? "var(--sp-positive)" : "var(--sp-danger)",
+        fontSize: 13,
+        fontWeight: 500,
+        cursor: "pointer",
+        boxShadow: "var(--shadow-md)",
+      }}
     >
       {type === "success" ? (
-        <CheckCircle className="w-4 h-4 shrink-0" />
+        <CheckCircle style={{ width: 14, height: 14, flexShrink: 0 }} />
       ) : (
-        <AlertCircle className="w-4 h-4 shrink-0" />
+        <AlertCircle style={{ width: 14, height: 14, flexShrink: 0 }} />
       )}
       {message}
     </div>
@@ -236,7 +258,7 @@ function SettingsContent() {
       });
       setSaved(map);
     } catch {
-      // silently ignore
+      /* silently ignore */
     } finally {
       setLoading(false);
     }
@@ -253,7 +275,7 @@ function SettingsContent() {
     }
   }, [fetchCredentials, searchParams]);
 
-  // ── Profile state ───────────────────────────────────────────────
+  // Profile state
   const [profileName, setProfileName] = useState("");
   const [profileEmail, setProfileEmail] = useState("");
   const [profileLoading, setProfileLoading] = useState(true);
@@ -270,7 +292,7 @@ function SettingsContent() {
         setProfileName(data.name ?? "");
         setProfileEmail(data.email ?? "");
       } catch {
-        // keep defaults
+        /* keep defaults */
       } finally {
         setProfileLoading(false);
       }
@@ -296,13 +318,13 @@ function SettingsContent() {
       showToast("Profile updated successfully!", "success");
       setTimeout(() => setProfileSuccess(false), 3000);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to save profile";
-      setProfileError(msg);
+      setProfileError(
+        err instanceof Error ? err.message : "Failed to save profile",
+      );
     } finally {
       setProfileSaving(false);
     }
   };
-  // ── End profile state ───────────────────────────────────────────
 
   const updateForm = (platform: Platform, updates: Partial<FormState>) => {
     setForms((prev) => ({
@@ -330,7 +352,6 @@ function SettingsContent() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to save");
-
       showToast(
         `${PLATFORM_CONFIG[platform].name} credentials saved!`,
         "success",
@@ -343,9 +364,11 @@ function SettingsContent() {
         saving: false,
       });
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "Failed to save credentials";
-      updateForm(platform, { saving: false, error: msg });
+      updateForm(platform, {
+        saving: false,
+        error:
+          err instanceof Error ? err.message : "Failed to save credentials",
+      });
     }
   };
 
@@ -388,8 +411,24 @@ function SettingsContent() {
       ? window.location.origin
       : "http://localhost:3000";
 
+  const TABS = [
+    { id: "profile" as const, label: "Profile", icon: User },
+    {
+      id: "integrations" as const,
+      label: "API Integrations",
+      icon: ExternalLink,
+    },
+  ];
+
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
       {toast && (
         <Toast
           message={toast.message}
@@ -398,477 +437,953 @@ function SettingsContent() {
         />
       )}
 
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-        <p className="text-sm text-text-secondary mt-1">
-          Manage your account preferences and API integrations.
-        </p>
-      </div>
+      <PageHeader crumb="Workspace · Configuration" title="Settings" />
 
-      {/* Tabs */}
-      <div className="flex gap-1 border-b border-border">
-        {(
-          [
-            { id: "profile", label: "Profile", icon: User },
-            {
-              id: "integrations",
-              label: "API Integrations",
-              icon: ExternalLink,
-            },
-          ] as const
-        ).map((tab) => (
+      {/* Tab bar */}
+      <div
+        style={{
+          display: "flex",
+          borderBottom: "1px solid var(--rule)",
+          background: "var(--paper-2)",
+          paddingLeft: "var(--pad-3)",
+          flexShrink: 0,
+        }}
+      >
+        {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? "border-primary text-primary"
-                : "border-transparent text-text-secondary hover:text-foreground"
-            }`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 7,
+              padding: "12px 16px",
+              fontSize: 13,
+              fontWeight: 500,
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+              color: activeTab === tab.id ? "var(--ink)" : "var(--ink-3)",
+              borderBottom:
+                activeTab === tab.id
+                  ? "2px solid var(--ink)"
+                  : "2px solid transparent",
+              marginBottom: -1,
+              transition: "color 0.15s",
+            }}
           >
-            <tab.icon className="w-4 h-4" />
+            <tab.icon style={{ width: 13, height: 13 }} />
             {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Profile Tab */}
-      {activeTab === "profile" && (
-        <div className="bg-surface-elevated border border-border rounded-xl overflow-hidden">
-          <div className="p-6 border-b border-border">
-            <h2 className="text-lg font-semibold">Profile Settings</h2>
-            <p className="text-sm text-text-secondary">
-              Manage your personal information and preferences.
-            </p>
-          </div>
-          <div className="p-6 space-y-6">
-            {profileLoading ? (
-              <div className="flex items-center gap-2 text-text-secondary text-sm">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Loading profile…
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid gap-2">
-                  <label htmlFor="name" className="text-sm font-medium">
-                    Display Name
-                  </label>
-                  <input
-                    id="name"
-                    value={profileName}
-                    onChange={(e) => setProfileName(e.target.value)}
-                    placeholder="Your display name"
-                    className="w-full bg-surface border border-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-foreground placeholder:text-text-secondary"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <label htmlFor="email" className="text-sm font-medium">
-                    Email Address
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={profileEmail}
-                    onChange={(e) => setProfileEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="w-full bg-surface border border-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-foreground placeholder:text-text-secondary"
-                  />
-                  <p className="text-xs text-text-secondary">
-                    This email is used for OAuth connections and notifications.
-                    Changing it updates all platform auth flows.
-                  </p>
-                </div>
-
-                {profileError && (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    {profileError}
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="pt-4 border-t border-border">
-              <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
-                <Bell className="w-4 h-4" />
-                Notifications
-              </h3>
-              <div className="space-y-4">
-                {[
-                  {
-                    label: "Publishing Success",
-                    desc: "Get notified when a post publishes successfully",
-                  },
-                  {
-                    label: "Publishing Failures",
-                    desc: "Get notified immediately if a post fails",
-                  },
-                  {
-                    label: "Weekly Report",
-                    desc: "Receive a weekly analytics summary",
-                  },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-sm">{item.label}</p>
-                      <p className="text-xs text-text-secondary">{item.desc}</p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        defaultChecked
-                      />
-                      <div className="w-11 h-6 bg-surface peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary border border-border" />
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border flex items-center justify-between">
-              {profileSuccess && (
-                <span className="flex items-center gap-1.5 text-xs text-emerald-400">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  Saved successfully
-                </span>
-              )}
-              <button
-                onClick={handleProfileSave}
-                disabled={profileSaving || profileLoading}
-                className="ml-auto flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-semibold
-                                    bg-primary hover:bg-primary-hover text-white
-                                    disabled:opacity-50 disabled:cursor-not-allowed
-                                    transition-all active:scale-95"
-              >
-                {profileSaving ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Saving…
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4" />
-                    Save Changes
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Integrations Tab */}
-      {activeTab === "integrations" && (
-        <div className="space-y-4">
-          <div className="bg-surface-elevated border border-amber-400/30 rounded-xl p-4 flex gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-amber-400">
-                API Credentials Required
-              </p>
-              <p className="text-xs text-text-secondary mt-1">
-                Enter your OAuth app credentials for each platform. Both fields
-                marked <span className="text-error font-bold">*</span> are
-                required before you can connect an account. Credentials are
-                stored securely in your database.
-              </p>
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="flex items-center justify-center h-48 text-text-secondary gap-2">
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Loading configuration...
-            </div>
-          ) : (
-            PLATFORMS.map((platform) => {
-              const config = PLATFORM_CONFIG[platform];
-              const Icon = config.icon;
-              const savedCred = saved[platform];
-              const form = forms[platform];
-              const valid = isFormValid(platform);
-
-              return (
+      <div
+        style={{
+          flex: 1,
+          overflow: "auto",
+          padding: "var(--pad-3) var(--pad-4)",
+        }}
+      >
+        <div style={{ maxWidth: 760 }}>
+          {/* Profile tab */}
+          {activeTab === "profile" && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--gap-3)",
+              }}
+            >
+              <div className="sp-card" style={{ overflow: "hidden" }}>
                 <div
-                  key={platform}
-                  className="bg-surface-elevated border border-border rounded-xl overflow-hidden"
+                  style={{
+                    padding: "var(--pad-2)",
+                    borderBottom: "1px solid var(--rule)",
+                  }}
                 >
-                  {/* Header */}
-                  <div className="flex items-center justify-between p-5 border-b border-border">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-10 h-10 rounded-xl ${config.bgColor} flex items-center justify-center ${config.color}`}
-                      >
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">{config.name}</h3>
-                        <a
-                          href={config.devUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-primary hover:underline flex items-center gap-1"
-                        >
-                          Open Developer Console{" "}
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                    </div>
-                    {savedCred ? (
-                      <span className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-success/10 text-success rounded-full">
-                        <CheckCircle className="w-3.5 h-3.5" />
-                        Configured
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-surface text-text-secondary border border-border rounded-full">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        Not configured
-                      </span>
-                    )}
+                  <div className="eyebrow">Account</div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: 18,
+                      marginTop: 4,
+                    }}
+                  >
+                    Profile settings
                   </div>
-
-                  <div className="p-5 space-y-4">
-                    {/* Currently saved credentials preview */}
-                    {savedCred && (
-                      <div className="flex items-start justify-between bg-success/5 border border-success/20 rounded-lg px-4 py-3">
-                        <div className="text-xs space-y-1">
-                          <p className="font-mono text-text-secondary">
-                            <span className="text-text-primary font-medium">
-                              Client ID:{" "}
-                            </span>
-                            {savedCred.clientId}
-                          </p>
-                          <p className="font-mono text-text-secondary">
-                            <span className="text-text-primary font-medium">
-                              Client Secret:{" "}
-                            </span>
-                            {savedCred.clientSecretMasked}
-                          </p>
-                          {platform === "INSTAGRAM" && (
-                            <p className="font-mono text-text-secondary">
-                              <span className="text-text-primary font-medium">
-                                Webhook Verify Token:{" "}
-                              </span>
-                              {savedCred.webhookVerifyToken ?? (
-                                <span className="italic text-text-secondary">
-                                  not set
-                                </span>
-                              )}
-                            </p>
-                          )}
-                          <p className="text-text-secondary pt-1">
-                            Updated{" "}
-                            {new Date(savedCred.updatedAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => handleRemove(platform)}
-                          disabled={form.removing}
-                          className="ml-4 p-1.5 text-error hover:bg-error/10 rounded-lg transition-colors disabled:opacity-50"
-                          title={`Remove ${config.name} credentials`}
+                </div>
+                <div
+                  style={{
+                    padding: "var(--pad-2)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "var(--gap-2)",
+                  }}
+                >
+                  {profileLoading ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        color: "var(--ink-3)",
+                        fontSize: 13,
+                      }}
+                    >
+                      <Loader2
+                        style={{
+                          width: 14,
+                          height: 14,
+                          animation: "spin 1s linear infinite",
+                        }}
+                      />
+                      Loading profile…
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <label
+                          style={{
+                            display: "block",
+                            fontSize: 12,
+                            fontFamily: "var(--font-mono)",
+                            color: "var(--ink-3)",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            marginBottom: 8,
+                          }}
                         >
-                          {form.removing ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Form */}
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {/* Client ID */}
-                      <div className="grid gap-1.5">
-                        <label className="text-sm font-medium flex items-center gap-1">
-                          Client ID
-                          <span
-                            className="text-error font-bold"
-                            title="Required"
-                          >
-                            *
-                          </span>
+                          Display name
                         </label>
                         <input
-                          type="text"
-                          value={form.clientId}
-                          onChange={(e) =>
-                            updateForm(platform, {
-                              clientId: e.target.value,
-                              error: null,
-                            })
+                          value={profileName}
+                          onChange={(e) => setProfileName(e.target.value)}
+                          placeholder="Your display name"
+                          style={inputStyle}
+                          onFocus={(e) =>
+                            (e.currentTarget.style.borderColor = "var(--ink-3)")
                           }
-                          placeholder={config.fields[0].placeholder}
-                          className={`w-full bg-surface border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-1 transition-colors ${
-                            form.clientId.trim() === "" && !form.saving
-                              ? "border-border focus:border-primary"
-                              : "border-border focus:border-primary"
-                          }`}
+                          onBlur={(e) =>
+                            (e.currentTarget.style.borderColor = "var(--rule)")
+                          }
                         />
                       </div>
-
-                      {/* Client Secret */}
-                      <div className="grid gap-1.5">
-                        <label className="text-sm font-medium flex items-center gap-1">
-                          Client Secret
-                          <span
-                            className="text-error font-bold"
-                            title="Required"
-                          >
-                            *
-                          </span>
-                        </label>
-                        <div className="relative">
-                          <input
-                            type={form.showSecret ? "text" : "password"}
-                            value={form.clientSecret}
-                            onChange={(e) =>
-                              updateForm(platform, {
-                                clientSecret: e.target.value,
-                                error: null,
-                              })
-                            }
-                            placeholder={config.fields[1].placeholder}
-                            className="w-full bg-surface border border-border rounded-lg px-3 py-2 pr-10 text-sm font-mono focus:outline-none focus:ring-1 focus:border-primary transition-colors"
-                          />
-                          <button
-                            type="button"
-                            onClick={() =>
-                              updateForm(platform, {
-                                showSecret: !form.showSecret,
-                              })
-                            }
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-foreground transition-colors"
-                          >
-                            {form.showSecret ? (
-                              <EyeOff className="w-4 h-4" />
-                            ) : (
-                              <Eye className="w-4 h-4" />
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Instagram webhook verify token */}
-                    {platform === "INSTAGRAM" && (
-                      <div className="grid gap-1.5">
-                        <label className="text-sm font-medium flex items-center gap-1">
-                          Webhook Verify Token
-                          <span className="text-xs text-text-secondary font-normal">
-                            (optional)
-                          </span>
-                        </label>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={form.webhookVerifyToken}
-                            onChange={(e) =>
-                              updateForm("INSTAGRAM", {
-                                webhookVerifyToken: e.target.value,
-                                error: null,
-                              })
-                            }
-                            placeholder="Enter or generate a verify token"
-                            className="flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-1 focus:border-primary transition-colors"
-                          />
-                          <button
-                            type="button"
-                            onClick={generateVerifyToken}
-                            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-surface border border-border rounded-lg hover:bg-surface-elevated transition-colors whitespace-nowrap"
-                            title="Generate a random verify token"
-                          >
-                            <RefreshCw className="w-3.5 h-3.5" /> Generate
-                          </button>
-                        </div>
-                        <p className="text-xs text-text-secondary">
-                          Used to verify webhook requests from Meta. Enter this
-                          same string in your Meta App → Webhooks → Verify Token
-                          field.
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Validation helper text */}
-                    {(!form.clientId.trim() || !form.clientSecret.trim()) &&
-                      form.clientId.trim() === "" &&
-                      form.clientSecret.trim() === "" && (
-                        <p className="text-xs text-text-secondary flex items-center gap-1.5">
-                          <span className="text-error font-bold">*</span>
-                          Both Client ID and Client Secret are required to
-                          enable {config.name} integration.
-                        </p>
-                      )}
-
-                    {form.error && (
-                      <p className="text-xs text-error flex items-center gap-1.5">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        {form.error}
-                      </p>
-                    )}
-
-                    {/* Callback URL info */}
-                    <div className="bg-surface rounded-lg border border-border px-3 py-2 text-xs space-y-1.5">
                       <div>
-                        <span className="text-text-secondary font-medium">
-                          Redirect / Callback URL:{" "}
-                        </span>
-                        <span className="font-mono text-primary">
-                          {origin}
-                          {config.callbackPath}
-                        </span>
+                        <label
+                          style={{
+                            display: "block",
+                            fontSize: 12,
+                            fontFamily: "var(--font-mono)",
+                            color: "var(--ink-3)",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            marginBottom: 8,
+                          }}
+                        >
+                          Email address
+                        </label>
+                        <input
+                          type="email"
+                          value={profileEmail}
+                          onChange={(e) => setProfileEmail(e.target.value)}
+                          placeholder="you@example.com"
+                          style={inputStyle}
+                          onFocus={(e) =>
+                            (e.currentTarget.style.borderColor = "var(--ink-3)")
+                          }
+                          onBlur={(e) =>
+                            (e.currentTarget.style.borderColor = "var(--rule)")
+                          }
+                        />
+                        <div
+                          style={{
+                            fontSize: 11.5,
+                            color: "var(--ink-3)",
+                            marginTop: 6,
+                          }}
+                        >
+                          Used for OAuth connections and notifications.
+                        </div>
                       </div>
-                      {platform === "INSTAGRAM" && (
-                        <div>
-                          <span className="text-text-secondary font-medium">
-                            Webhook Callback URL:{" "}
-                          </span>
-                          <span className="font-mono text-primary">
-                            {origin}/api/webhooks/instagram
-                          </span>
+
+                      {profileError && (
+                        <div
+                          style={{
+                            padding: "10px 14px",
+                            borderRadius: 6,
+                            background: "var(--sp-warn-soft)",
+                            border: "1px solid var(--sp-warn)",
+                            color: "var(--sp-danger)",
+                            fontSize: 12.5,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          <AlertCircle
+                            style={{ width: 13, height: 13, flexShrink: 0 }}
+                          />
+                          {profileError}
                         </div>
                       )}
-                      <p className="text-text-secondary">{config.notes}</p>
-                    </div>
+                    </>
+                  )}
+                </div>
+              </div>
 
-                    {/* Save Button */}
-                    <div className="flex justify-end">
-                      <button
-                        onClick={() => handleSave(platform)}
-                        disabled={!valid || form.saving}
-                        className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-                          valid && !form.saving
-                            ? "bg-primary hover:bg-primary-hover text-white cursor-pointer"
-                            : "bg-surface text-text-secondary border border-border cursor-not-allowed opacity-60"
-                        }`}
-                        title={
-                          !valid
-                            ? "Fill in both Client ID and Client Secret to save"
-                            : ""
-                        }
-                      >
-                        {form.saving ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />{" "}
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <Save className="w-4 h-4" />{" "}
-                            {savedCred
-                              ? "Update Credentials"
-                              : "Save Credentials"}
-                          </>
-                        )}
-                      </button>
-                    </div>
+              {/* Notifications */}
+              <div className="sp-card" style={{ overflow: "hidden" }}>
+                <div
+                  style={{
+                    padding: "var(--pad-2)",
+                    borderBottom: "1px solid var(--rule)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <Bell
+                    style={{ width: 14, height: 14, color: "var(--ink-3)" }}
+                  />
+                  <div
+                    style={{ fontFamily: "var(--font-display)", fontSize: 18 }}
+                  >
+                    Notifications
                   </div>
                 </div>
-              );
-            })
+                <div
+                  style={{
+                    padding: "var(--pad-2)",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {[
+                    {
+                      label: "Publishing success",
+                      desc: "Get notified when a post publishes successfully",
+                    },
+                    {
+                      label: "Publishing failures",
+                      desc: "Get notified immediately if a post fails",
+                    },
+                    {
+                      label: "Weekly report",
+                      desc: "Receive a weekly analytics summary",
+                    },
+                  ].map((item, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "14px 0",
+                        borderBottom: i < 2 ? "1px solid var(--rule)" : "none",
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                            marginBottom: 2,
+                          }}
+                        >
+                          {item.label}
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--ink-3)" }}>
+                          {item.desc}
+                        </div>
+                      </div>
+                      <label
+                        style={{
+                          position: "relative",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          style={{
+                            position: "absolute",
+                            opacity: 0,
+                            width: 0,
+                            height: 0,
+                          }}
+                        />
+                        <div
+                          style={{
+                            width: 40,
+                            height: 22,
+                            borderRadius: 11,
+                            background: "var(--ink)",
+                            position: "relative",
+                          }}
+                        >
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: 3,
+                              left: 20,
+                              width: 16,
+                              height: 16,
+                              borderRadius: "50%",
+                              background: "var(--paper)",
+                            }}
+                          />
+                        </div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 8,
+                  alignItems: "center",
+                }}
+              >
+                {profileSuccess && (
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      fontSize: 12,
+                      color: "var(--sp-positive)",
+                    }}
+                  >
+                    <CheckCircle style={{ width: 13, height: 13 }} /> Saved
+                  </span>
+                )}
+                <button
+                  onClick={handleProfileSave}
+                  disabled={profileSaving || profileLoading}
+                  className="sp-btn sp-btn-primary"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    opacity: profileSaving || profileLoading ? 0.6 : 1,
+                  }}
+                >
+                  {profileSaving ? (
+                    <Loader2
+                      style={{
+                        width: 13,
+                        height: 13,
+                        animation: "spin 1s linear infinite",
+                      }}
+                    />
+                  ) : (
+                    <Save style={{ width: 13, height: 13 }} />
+                  )}
+                  {profileSaving ? "Saving…" : "Save changes"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Integrations tab */}
+          {activeTab === "integrations" && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--gap-3)",
+              }}
+            >
+              <div
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  background: "var(--sp-warn-soft)",
+                  border: "1px solid var(--sp-warn)",
+                  display: "flex",
+                  gap: 10,
+                  alignItems: "flex-start",
+                }}
+              >
+                <AlertCircle
+                  style={{
+                    width: 14,
+                    height: 14,
+                    color: "var(--sp-warn)",
+                    flexShrink: 0,
+                    marginTop: 1,
+                  }}
+                />
+                <div>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      color: "var(--sp-warn)",
+                      marginBottom: 4,
+                    }}
+                  >
+                    API credentials required
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "var(--ink-2)",
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    Enter your OAuth app credentials for each platform. Both
+                    fields are required before you can connect an account.
+                    Credentials are stored securely in your database.
+                  </div>
+                </div>
+              </div>
+
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 160,
+                    gap: 10,
+                    color: "var(--ink-3)",
+                    fontSize: 13,
+                  }}
+                >
+                  <Loader2
+                    style={{
+                      width: 16,
+                      height: 16,
+                      animation: "spin 1s linear infinite",
+                    }}
+                  />
+                  Loading configuration…
+                </div>
+              ) : (
+                PLATFORMS.map((platform) => {
+                  const config = PLATFORM_CONFIG[platform];
+                  const savedCred = saved[platform];
+                  const form = forms[platform];
+                  const valid = isFormValid(platform);
+
+                  return (
+                    <div
+                      key={platform}
+                      className="sp-card"
+                      style={{ overflow: "hidden" }}
+                    >
+                      {/* Header */}
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "var(--pad-2)",
+                          borderBottom: "1px solid var(--rule)",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: 36,
+                              height: 36,
+                              borderRadius: 6,
+                              background: "var(--ink)",
+                              color: "var(--paper)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontFamily: "var(--font-mono)",
+                              fontSize: 15,
+                              fontWeight: 600,
+                              flexShrink: 0,
+                            }}
+                          >
+                            {GLYPH_MAP[platform]}
+                          </span>
+                          <div>
+                            <div style={{ fontWeight: 500, fontSize: 14 }}>
+                              {config.name}
+                            </div>
+                            <a
+                              href={config.devUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                fontSize: 11.5,
+                                color: "var(--sp-accent)",
+                                textDecoration: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 4,
+                              }}
+                            >
+                              Developer console{" "}
+                              <ExternalLink style={{ width: 10, height: 10 }} />
+                            </a>
+                          </div>
+                        </div>
+                        {savedCred ? (
+                          <span
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 5,
+                              padding: "4px 10px",
+                              borderRadius: 999,
+                              background: "var(--sp-positive-soft)",
+                              color: "var(--sp-positive)",
+                              fontSize: 11,
+                              fontFamily: "var(--font-mono)",
+                              fontWeight: 600,
+                            }}
+                          >
+                            <CheckCircle style={{ width: 11, height: 11 }} />{" "}
+                            Configured
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 5,
+                              padding: "4px 10px",
+                              borderRadius: 999,
+                              background: "var(--paper-3)",
+                              color: "var(--ink-3)",
+                              fontSize: 11,
+                              fontFamily: "var(--font-mono)",
+                            }}
+                          >
+                            <AlertCircle style={{ width: 11, height: 11 }} />{" "}
+                            Not configured
+                          </span>
+                        )}
+                      </div>
+
+                      <div
+                        style={{
+                          padding: "var(--pad-2)",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 16,
+                        }}
+                      >
+                        {/* Saved credentials */}
+                        {savedCred && (
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "flex-start",
+                              justifyContent: "space-between",
+                              padding: "12px 14px",
+                              borderRadius: 6,
+                              background: "var(--sp-positive-soft)",
+                              border: "1px solid var(--sp-positive)",
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: 12,
+                                lineHeight: 1.7,
+                                fontFamily: "var(--font-mono)",
+                                color: "var(--ink-2)",
+                              }}
+                            >
+                              <div>
+                                <span
+                                  style={{
+                                    color: "var(--ink)",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  Client ID:{" "}
+                                </span>
+                                {savedCred.clientId}
+                              </div>
+                              <div>
+                                <span
+                                  style={{
+                                    color: "var(--ink)",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  Client Secret:{" "}
+                                </span>
+                                {savedCred.clientSecretMasked}
+                              </div>
+                              {platform === "INSTAGRAM" && (
+                                <div>
+                                  <span
+                                    style={{
+                                      color: "var(--ink)",
+                                      fontWeight: 500,
+                                    }}
+                                  >
+                                    Webhook Token:{" "}
+                                  </span>
+                                  {savedCred.webhookVerifyToken ?? (
+                                    <em>not set</em>
+                                  )}
+                                </div>
+                              )}
+                              <div
+                                style={{ color: "var(--ink-3)", marginTop: 4 }}
+                              >
+                                Updated{" "}
+                                {new Date(
+                                  savedCred.updatedAt,
+                                ).toLocaleDateString()}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleRemove(platform)}
+                              disabled={form.removing}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "var(--sp-danger)",
+                                cursor: "pointer",
+                                padding: 4,
+                                flexShrink: 0,
+                                opacity: form.removing ? 0.5 : 1,
+                              }}
+                            >
+                              {form.removing ? (
+                                <Loader2
+                                  style={{
+                                    width: 14,
+                                    height: 14,
+                                    animation: "spin 1s linear infinite",
+                                  }}
+                                />
+                              ) : (
+                                <Trash2 style={{ width: 14, height: 14 }} />
+                              )}
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Credentials form */}
+                        <div
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr",
+                            gap: 12,
+                          }}
+                          className="settings-form-grid"
+                        >
+                          <div>
+                            <label
+                              style={{
+                                display: "block",
+                                fontSize: 11.5,
+                                fontFamily: "var(--font-mono)",
+                                color: "var(--ink-3)",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.1em",
+                                marginBottom: 6,
+                              }}
+                            >
+                              Client ID{" "}
+                              <span style={{ color: "var(--sp-danger)" }}>
+                                *
+                              </span>
+                            </label>
+                            <input
+                              type="text"
+                              value={form.clientId}
+                              onChange={(e) =>
+                                updateForm(platform, {
+                                  clientId: e.target.value,
+                                  error: null,
+                                })
+                              }
+                              placeholder={config.fields[0].placeholder}
+                              style={inputStyle}
+                              onFocus={(e) =>
+                                (e.currentTarget.style.borderColor =
+                                  "var(--ink-3)")
+                              }
+                              onBlur={(e) =>
+                                (e.currentTarget.style.borderColor =
+                                  "var(--rule)")
+                              }
+                            />
+                          </div>
+                          <div>
+                            <label
+                              style={{
+                                display: "block",
+                                fontSize: 11.5,
+                                fontFamily: "var(--font-mono)",
+                                color: "var(--ink-3)",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.1em",
+                                marginBottom: 6,
+                              }}
+                            >
+                              Client Secret{" "}
+                              <span style={{ color: "var(--sp-danger)" }}>
+                                *
+                              </span>
+                            </label>
+                            <div style={{ position: "relative" }}>
+                              <input
+                                type={form.showSecret ? "text" : "password"}
+                                value={form.clientSecret}
+                                onChange={(e) =>
+                                  updateForm(platform, {
+                                    clientSecret: e.target.value,
+                                    error: null,
+                                  })
+                                }
+                                placeholder={config.fields[1].placeholder}
+                                style={{ ...inputStyle, paddingRight: 38 }}
+                                onFocus={(e) =>
+                                  (e.currentTarget.style.borderColor =
+                                    "var(--ink-3)")
+                                }
+                                onBlur={(e) =>
+                                  (e.currentTarget.style.borderColor =
+                                    "var(--rule)")
+                                }
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  updateForm(platform, {
+                                    showSecret: !form.showSecret,
+                                  })
+                                }
+                                style={{
+                                  position: "absolute",
+                                  right: 10,
+                                  top: "50%",
+                                  transform: "translateY(-50%)",
+                                  background: "none",
+                                  border: "none",
+                                  color: "var(--ink-3)",
+                                  cursor: "pointer",
+                                  padding: 0,
+                                }}
+                              >
+                                {form.showSecret ? (
+                                  <EyeOff style={{ width: 14, height: 14 }} />
+                                ) : (
+                                  <Eye style={{ width: 14, height: 14 }} />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Instagram webhook token */}
+                        {platform === "INSTAGRAM" && (
+                          <div>
+                            <label
+                              style={{
+                                display: "block",
+                                fontSize: 11.5,
+                                fontFamily: "var(--font-mono)",
+                                color: "var(--ink-3)",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.1em",
+                                marginBottom: 6,
+                              }}
+                            >
+                              Webhook Verify Token{" "}
+                              <span
+                                style={{
+                                  textTransform: "none",
+                                  letterSpacing: 0,
+                                }}
+                              >
+                                (optional)
+                              </span>
+                            </label>
+                            <div style={{ display: "flex", gap: 8 }}>
+                              <input
+                                type="text"
+                                value={form.webhookVerifyToken}
+                                onChange={(e) =>
+                                  updateForm("INSTAGRAM", {
+                                    webhookVerifyToken: e.target.value,
+                                    error: null,
+                                  })
+                                }
+                                placeholder="Enter or generate a verify token"
+                                style={{ ...inputStyle, flex: 1 }}
+                                onFocus={(e) =>
+                                  (e.currentTarget.style.borderColor =
+                                    "var(--ink-3)")
+                                }
+                                onBlur={(e) =>
+                                  (e.currentTarget.style.borderColor =
+                                    "var(--rule)")
+                                }
+                              />
+                              <button
+                                type="button"
+                                onClick={generateVerifyToken}
+                                className="sp-btn sp-btn-ghost"
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 5,
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                <RefreshCw style={{ width: 12, height: 12 }} />{" "}
+                                Generate
+                              </button>
+                            </div>
+                            <div
+                              style={{
+                                fontSize: 11.5,
+                                color: "var(--ink-3)",
+                                marginTop: 6,
+                              }}
+                            >
+                              Used to verify webhook requests from Meta. Enter
+                              this string in Meta App → Webhooks → Verify Token.
+                            </div>
+                          </div>
+                        )}
+
+                        {form.error && (
+                          <div
+                            style={{
+                              fontSize: 12.5,
+                              color: "var(--sp-danger)",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 6,
+                            }}
+                          >
+                            <AlertCircle style={{ width: 12, height: 12 }} />{" "}
+                            {form.error}
+                          </div>
+                        )}
+
+                        {/* Callback URL info */}
+                        <div
+                          style={{
+                            padding: "10px 14px",
+                            borderRadius: 6,
+                            background: "var(--paper-2)",
+                            border: "1px solid var(--rule)",
+                            fontSize: 12,
+                            fontFamily: "var(--font-mono)",
+                            lineHeight: 1.7,
+                          }}
+                        >
+                          <div>
+                            <span style={{ color: "var(--ink-3)" }}>
+                              Callback URL:{" "}
+                            </span>
+                            <span style={{ color: "var(--sp-accent)" }}>
+                              {origin}
+                              {config.callbackPath}
+                            </span>
+                          </div>
+                          {platform === "INSTAGRAM" && (
+                            <div>
+                              <span style={{ color: "var(--ink-3)" }}>
+                                Webhook URL:{" "}
+                              </span>
+                              <span style={{ color: "var(--sp-accent)" }}>
+                                {origin}/api/webhooks/instagram
+                              </span>
+                            </div>
+                          )}
+                          <div
+                            style={{
+                              fontFamily: "var(--font-ui)",
+                              color: "var(--ink-3)",
+                              marginTop: 6,
+                              fontSize: 11.5,
+                              lineHeight: 1.55,
+                            }}
+                          >
+                            {config.notes}
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                          }}
+                        >
+                          <button
+                            onClick={() => handleSave(platform)}
+                            disabled={!valid || form.saving}
+                            className="sp-btn sp-btn-primary"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 6,
+                              opacity: !valid || form.saving ? 0.5 : 1,
+                              cursor:
+                                !valid || form.saving
+                                  ? "not-allowed"
+                                  : "pointer",
+                            }}
+                          >
+                            {form.saving ? (
+                              <Loader2
+                                style={{
+                                  width: 13,
+                                  height: 13,
+                                  animation: "spin 1s linear infinite",
+                                }}
+                              />
+                            ) : (
+                              <Save style={{ width: 13, height: 13 }} />
+                            )}
+                            {form.saving
+                              ? "Saving…"
+                              : savedCred
+                                ? "Update credentials"
+                                : "Save credentials"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           )}
         </div>
-      )}
+      </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @media (max-width: 640px) {
+          .settings-form-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -877,8 +1392,17 @@ export default function SettingsPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center h-64 text-text-secondary">
-          Loading settings...
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            color: "var(--ink-3)",
+            fontSize: 13,
+          }}
+        >
+          Loading settings…
         </div>
       }
     >

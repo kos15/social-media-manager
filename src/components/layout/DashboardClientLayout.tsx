@@ -3,94 +3,257 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Calendar, PenTool, Sparkles, BarChart, Users, Settings, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  PenTool,
+  Calendar,
+  BarChart2,
+  Link2,
+  Sparkles,
+  Image,
+  X,
+} from "lucide-react";
 import { Sidebar } from "./Sidebar";
-import { TopBar } from "./TopBar";
-import { cn } from "@/lib/utils";
 
 const navItems = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Composer", href: "/composer", icon: PenTool },
-    { name: "Calendar", href: "/calendar", icon: Calendar },
-    { name: "AI Studio", href: "/ai-studio", icon: Sparkles },
-    { name: "Analytics", href: "/analytics", icon: BarChart },
-    { name: "Accounts", href: "/accounts", icon: Users },
-    { name: "Settings", href: "/settings", icon: Settings },
+  {
+    id: "dashboard",
+    label: "Overview",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  { id: "composer", label: "Composer", href: "/composer", icon: PenTool },
+  { id: "calendar", label: "Calendar", href: "/calendar", icon: Calendar },
+  { id: "analytics", label: "Analytics", href: "/analytics", icon: BarChart2 },
+  { id: "accounts", label: "Accounts", href: "/accounts", icon: Link2 },
+  { id: "ai-studio", label: "AI Studio", href: "/ai-studio", icon: Sparkles },
+  { id: "media", label: "Media", href: "#", icon: Image },
 ];
 
-export function DashboardClientLayout({ children }: { children: React.ReactNode }) {
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const pathname = usePathname();
+export function DashboardClientLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
-    return (
-        <div className="flex min-h-screen bg-background text-foreground">
-            {/* Desktop sidebar */}
-            <Sidebar />
+  const isActive = (href: string) => href !== "#" && pathname.startsWith(href);
 
-            {/* Mobile overlay */}
-            {mobileOpen && (
-                <div
-                    className="fixed inset-0 z-40 bg-black/60 md:hidden"
-                    onClick={() => setMobileOpen(false)}
-                />
-            )}
+  return (
+    <div
+      style={{
+        display: "flex",
+        minHeight: "100vh",
+        background: "var(--paper)",
+        color: "var(--ink)",
+      }}
+    >
+      {/* Desktop sidebar */}
+      <Sidebar />
 
-            {/* Mobile drawer */}
-            <div
-                className={cn(
-                    "fixed inset-y-0 left-0 z-50 w-64 bg-surface-elevated border-r border-border flex flex-col transform transition-transform duration-300 ease-in-out md:hidden",
-                    mobileOpen ? "translate-x-0" : "-translate-x-full"
-                )}
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 md:hidden"
+          style={{ background: "oklch(0% 0 0 / 0.5)" }}
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile drawer */}
+      <div
+        className="md:hidden fixed inset-y-0 left-0 z-50 flex flex-col"
+        style={{
+          width: 232,
+          background: "var(--paper)",
+          borderRight: "1px solid var(--rule)",
+          transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <div
+          style={{
+            padding: "16px 22px",
+            borderBottom: "1px solid var(--rule)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Link
+            href="/"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              textDecoration: "none",
+            }}
+          >
+            <span
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 6,
+                background: "var(--ink)",
+                color: "var(--paper)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontStyle: "italic",
+                fontSize: 18,
+              }}
             >
-                <div className="p-5 flex items-center justify-between border-b border-border">
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                        SocialPulse
-                    </h1>
-                    <button
-                        onClick={() => setMobileOpen(false)}
-                        className="p-1.5 rounded-md text-text-secondary hover:text-foreground hover:bg-surface transition-colors"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
-
-                <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
-                    {navItems.map((item) => {
-                        const isActive = pathname.startsWith(item.href);
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setMobileOpen(false)}
-                                className={cn(
-                                    "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group",
-                                    isActive
-                                        ? "bg-primary/10 text-primary font-medium"
-                                        : "text-text-secondary hover:bg-surface hover:text-text-primary"
-                                )}
-                            >
-                                <item.icon
-                                    className={cn(
-                                        "w-5 h-5",
-                                        isActive ? "text-primary" : "text-text-secondary group-hover:text-text-primary"
-                                    )}
-                                />
-                                <span>{item.name}</span>
-                            </Link>
-                        );
-                    })}
-                </nav>
-            </div>
-
-            {/* Main content */}
-            <div className="flex-1 flex flex-col min-w-0">
-                <TopBar onMenuClick={() => setMobileOpen(true)} />
-                <main className="flex-1 relative overflow-y-auto w-full p-4 md:p-6">
-                    <div className="max-w-6xl mx-auto">
-                        {children}
-                    </div>
-                </main>
-            </div>
+              S
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 22,
+                letterSpacing: "-0.02em",
+                lineHeight: 1,
+                color: "var(--ink)",
+              }}
+            >
+              Social
+              <em style={{ fontStyle: "italic", color: "var(--ink-3)" }}>
+                plus
+              </em>
+            </span>
+          </Link>
+          <button
+            onClick={() => setMobileOpen(false)}
+            style={{
+              padding: 6,
+              borderRadius: 6,
+              background: "transparent",
+              border: "none",
+              color: "var(--ink-3)",
+              cursor: "pointer",
+            }}
+          >
+            <X style={{ width: 16, height: 16 }} />
+          </button>
         </div>
-    );
+        <nav style={{ flex: 1, padding: "14px 14px", overflowY: "auto" }}>
+          <div
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 10,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: "var(--ink-3)",
+              padding: "0 12px 8px",
+            }}
+          >
+            Workspace
+          </div>
+          {navItems.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className={`sp-sidebar-link ${isActive(item.href) ? "active" : ""}`}
+            >
+              <item.icon style={{ width: 15, height: 15, strokeWidth: 1.5 }} />
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      {/* Main content */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          minWidth: 0,
+          overflow: "hidden",
+        }}
+      >
+        {/* Mobile topbar */}
+        <div
+          className="md:hidden"
+          style={{
+            height: 56,
+            borderBottom: "1px solid var(--rule)",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 20px",
+            gap: 12,
+            background: "var(--paper)",
+            flexShrink: 0,
+          }}
+        >
+          <button
+            onClick={() => setMobileOpen(true)}
+            style={{
+              padding: 6,
+              borderRadius: 6,
+              border: "1px solid var(--rule)",
+              background: "var(--paper-2)",
+              color: "var(--ink-2)",
+              cursor: "pointer",
+            }}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
+          </button>
+          <Link
+            href="/"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              textDecoration: "none",
+            }}
+          >
+            <span
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: 5,
+                background: "var(--ink)",
+                color: "var(--paper)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontStyle: "italic",
+                fontSize: 15,
+              }}
+            >
+              S
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 18,
+                letterSpacing: "-0.02em",
+                color: "var(--ink)",
+              }}
+            >
+              Social
+              <em style={{ fontStyle: "italic", color: "var(--ink-3)" }}>
+                plus
+              </em>
+            </span>
+          </Link>
+        </div>
+        <main style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+          {children}
+        </main>
+      </div>
+    </div>
+  );
 }
