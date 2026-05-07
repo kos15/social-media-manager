@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Copy, Calendar } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 
 const TOP_POSTS = [
@@ -190,8 +190,18 @@ export default function AnalyticsPage() {
         title="Analytics"
         actions={
           <>
-            <button className="sp-btn">Last 30 days</button>
-            <button className="sp-btn">Export</button>
+            <button
+              className="sp-btn"
+              style={{ display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <Calendar style={{ width: 13, height: 13 }} /> Last 30 days
+            </button>
+            <button
+              className="sp-btn"
+              style={{ display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <Copy style={{ width: 13, height: 13 }} /> Export
+            </button>
           </>
         }
       />

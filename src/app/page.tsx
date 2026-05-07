@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 
 // ── Typewriter hook ──
 function useTypewriter(phrases: string[], trigger: boolean) {
@@ -39,6 +40,7 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [typeTrigger, setTypeTrigger] = useState(false);
   const mockRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme, setTheme } = useTheme();
 
   const typedText = useTypewriter(
     [
@@ -226,6 +228,46 @@ export default function LandingPage() {
                 gap: 10,
               }}
             >
+              <button
+                onClick={() =>
+                  setTheme(resolvedTheme === "dark" ? "light" : "dark")
+                }
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 6,
+                  border: "1px solid var(--rule)",
+                  background: "var(--paper)",
+                  color: "var(--ink-2)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                title={resolvedTheme === "dark" ? "Light mode" : "Dark mode"}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  {resolvedTheme === "dark" ? (
+                    <>
+                      <circle cx="12" cy="12" r="4" />
+                      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </>
+                  )}
+                </svg>
+              </button>
               <Link
                 href="/login"
                 style={{

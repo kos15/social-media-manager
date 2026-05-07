@@ -1,4 +1,8 @@
+"use client";
+
 import React from "react";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
 
 export function PageHeader({
   crumb,
@@ -9,6 +13,8 @@ export function PageHeader({
   title: React.ReactNode;
   actions?: React.ReactNode;
 }) {
+  const { resolvedTheme, setTheme } = useTheme();
+
   return (
     <div
       style={{
@@ -55,18 +61,34 @@ export function PageHeader({
           {title}
         </div>
       </div>
-      {actions && (
-        <div
+      <div
+        style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}
+      >
+        {actions}
+        <button
+          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          className="sp-btn sp-btn-ghost"
           style={{
+            width: 32,
+            height: 32,
+            padding: 0,
             display: "flex",
             alignItems: "center",
-            gap: 8,
-            flexShrink: 0,
+            justifyContent: "center",
           }}
+          title={
+            resolvedTheme === "dark"
+              ? "Switch to light mode"
+              : "Switch to dark mode"
+          }
         >
-          {actions}
-        </div>
-      )}
+          {resolvedTheme === "dark" ? (
+            <Sun style={{ width: 14, height: 14 }} />
+          ) : (
+            <Moon style={{ width: 14, height: 14 }} />
+          )}
+        </button>
+      </div>
     </div>
   );
 }

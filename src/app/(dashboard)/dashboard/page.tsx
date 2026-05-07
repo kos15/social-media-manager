@@ -4,8 +4,123 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw, Plus, ArrowUpRight } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { PlatformChart } from "@/components/dashboard/PlatformChart";
 import { usePostStore } from "@/store/usePostStore";
+
+const SPARKLINE_SERIES = [
+  {
+    key: "x",
+    label: "X",
+    color: "var(--ink)",
+    points: [40, 55, 50, 70, 65, 88, 78, 92, 85, 100, 95, 115],
+  },
+  {
+    key: "in",
+    label: "LinkedIn",
+    color: "var(--ink-3)",
+    points: [20, 30, 28, 35, 40, 50, 48, 60, 58, 70, 68, 80],
+  },
+  {
+    key: "ig",
+    label: "Instagram",
+    color: "var(--ink-4)",
+    points: [15, 18, 22, 20, 28, 25, 32, 30, 38, 35, 42, 40],
+  },
+];
+const GLYPH_LABELS: Record<string, string> = { x: "𝕏", in: "in", ig: "Ig" };
+const DAY_LABELS = ["M", "T", "W", "T", "F", "S", "S", "M", "T", "W", "T", "F"];
+
+function PerformanceChart() {
+  const W = 720,
+    H = 180,
+    P = 28;
+  const max = 130;
+  const xs = (i: number) => P + (i * (W - P * 2)) / 11;
+  const ys = (v: number) => H - P - (v / max) * (H - P * 2);
+  return (
+    <div>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        width="100%"
+        height={180}
+        style={{ display: "block" }}
+      >
+        {[0, 0.25, 0.5, 0.75, 1].map((t) => (
+          <line
+            key={t}
+            x1={P}
+            x2={W - P}
+            y1={P + t * (H - P * 2)}
+            y2={P + t * (H - P * 2)}
+            stroke="var(--rule)"
+            strokeWidth="0.5"
+          />
+        ))}
+        {SPARKLINE_SERIES.map((s) => (
+          <polyline
+            key={s.key}
+            points={s.points.map((v, i) => `${xs(i)},${ys(v)}`).join(" ")}
+            fill="none"
+            stroke={s.color}
+            strokeWidth="1.5"
+          />
+        ))}
+        {DAY_LABELS.map((d, i) => (
+          <text
+            key={i}
+            x={xs(i)}
+            y={H - 6}
+            fontSize="9"
+            fontFamily="var(--font-mono)"
+            fill="var(--ink-3)"
+            textAnchor="middle"
+          >
+            {d}
+          </text>
+        ))}
+      </svg>
+      <div style={{ display: "flex", gap: 18, paddingTop: 10, fontSize: 11 }}>
+        {SPARKLINE_SERIES.map((s) => (
+          <span
+            key={s.key}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              color: "var(--ink-2)",
+            }}
+          >
+            <span
+              style={{
+                width: 10,
+                height: 2,
+                background: s.color,
+                display: "inline-block",
+              }}
+            />
+            <span
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: 3,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "var(--paper-3)",
+                border: "1px solid var(--rule)",
+                fontFamily: "var(--font-mono)",
+                fontSize: 8,
+                fontWeight: 600,
+              }}
+            >
+              {GLYPH_LABELS[s.key]}
+            </span>
+            <span style={{ fontFamily: "var(--font-mono)" }}>{s.label}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const PLATFORMS = [
   { id: "x", glyph: "𝕏", name: "X / Twitter", handle: "@socialplus" },
@@ -252,7 +367,7 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
-            <PlatformChart />
+            <PerformanceChart />
           </div>
 
           <div className="sp-card" style={{ padding: "var(--pad-2)" }}>

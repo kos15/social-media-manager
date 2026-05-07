@@ -187,7 +187,7 @@ export function DashboardClientLayout({
           }}
         >
           <button
-            onClick={() => setMobileOpen(true)}
+            onClick={() => setMobileOpen((o) => !o)}
             style={{
               padding: 6,
               borderRadius: 6,
