@@ -174,11 +174,10 @@ export function DashboardClientLayout({
       >
         {/* Mobile topbar */}
         <div
-          className="md:hidden"
+          className="flex md:hidden"
           style={{
             height: 56,
             borderBottom: "1px solid var(--rule)",
-            display: "flex",
             alignItems: "center",
             padding: "0 20px",
             gap: 12,
