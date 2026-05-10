@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { usePostStore } from "@/store/usePostStore";
+import { LoaderThinking } from "@/components/ui/sp-loaders";
 
 /* ── Constants ────────────────────────────────────────────────────── */
 
@@ -332,41 +333,10 @@ function GeneratingSkeleton() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 16,
         padding: "40px 0",
       }}
     >
-      <div className="logo-loader-ring">
-        <span
-          style={{
-            width: 56,
-            height: 56,
-            borderRadius: 12,
-            background: "var(--ink)",
-            color: "var(--paper)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: "var(--font-display)",
-            fontStyle: "italic",
-            fontSize: 32,
-            flexShrink: 0,
-          }}
-          className="logo-loader-pulse"
-        >
-          S
-        </span>
-      </div>
-      <span
-        style={{
-          fontSize: 12,
-          fontFamily: "var(--font-mono)",
-          color: "var(--ink-3)",
-          letterSpacing: "0.06em",
-        }}
-      >
-        Generating…
-      </span>
+      <LoaderThinking />
     </div>
   );
 }
@@ -1505,47 +1475,6 @@ export default function AIStudioPage() {
           to {
             transform: rotate(360deg);
           }
-        }
-        @keyframes logoPulse {
-          0%,
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          50% {
-            transform: scale(0.92);
-            opacity: 0.7;
-          }
-        }
-        @keyframes logoRing {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-        :global(.logo-loader-pulse) {
-          animation: logoPulse 1.6s ease-in-out infinite;
-          display: flex !important;
-        }
-        :global(.logo-loader-ring) {
-          position: relative;
-          width: 72px;
-          height: 72px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        :global(.logo-loader-ring::before) {
-          content: "";
-          position: absolute;
-          inset: 0;
-          border-radius: 18px;
-          border: 2px solid transparent;
-          border-top-color: var(--ink);
-          border-right-color: var(--ink-3);
-          animation: logoRing 1.2s linear infinite;
         }
         @media (max-width: 768px) {
           .ai-layout {

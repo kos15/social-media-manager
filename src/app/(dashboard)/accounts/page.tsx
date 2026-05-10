@@ -12,6 +12,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { LoaderShimmer } from "@/components/ui/sp-loaders";
 
 interface SocialAccount {
   id: string;
@@ -351,60 +352,12 @@ function AccountsContent() {
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              gap: 1,
-              border: "1px solid var(--rule)",
-              borderRadius: 8,
-              overflow: "hidden",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "40px 0",
             }}
           >
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                style={{
-                  padding: "14px var(--pad-2)",
-                  background: "var(--paper)",
-                  borderBottom: "1px solid var(--rule)",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 14,
-                }}
-              >
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 4,
-                    background: "var(--paper-3)",
-                  }}
-                />
-                <div
-                  style={{
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 6,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 120,
-                      height: 13,
-                      background: "var(--paper-3)",
-                      borderRadius: 4,
-                    }}
-                  />
-                  <div
-                    style={{
-                      width: 80,
-                      height: 11,
-                      background: "var(--paper-3)",
-                      borderRadius: 4,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
+            <LoaderShimmer width={400} lines={3} />
           </div>
         )}
 

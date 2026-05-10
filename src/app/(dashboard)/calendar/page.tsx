@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { LoaderRule } from "@/components/ui/sp-loaders";
 import { usePostStore, ScheduledPost } from "@/store/usePostStore";
 import { PostPreviewModal } from "@/components/calendar/PostPreviewModal";
 
@@ -203,6 +204,20 @@ export default function CalendarPage() {
             }}
           >
             {fetchError}
+          </div>
+        )}
+
+        {loading && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              padding: "60px 0",
+            }}
+          >
+            <LoaderRule width={280} />
           </div>
         )}
 

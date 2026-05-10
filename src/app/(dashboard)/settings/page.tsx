@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { LoaderRule } from "@/components/ui/sp-loaders";
 
 type Platform = "TWITTER" | "LINKEDIN" | "INSTAGRAM" | "YOUTUBE";
 
@@ -852,19 +853,9 @@ function SettingsContent() {
                     alignItems: "center",
                     justifyContent: "center",
                     height: 160,
-                    gap: 10,
-                    color: "var(--ink-3)",
-                    fontSize: 13,
                   }}
                 >
-                  <Loader2
-                    style={{
-                      width: 16,
-                      height: 16,
-                      animation: "spin 1s linear infinite",
-                    }}
-                  />
-                  Loading configuration…
+                  <LoaderRule width={220} />
                 </div>
               ) : (
                 PLATFORMS.map((platform) => {
