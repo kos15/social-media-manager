@@ -14,6 +14,8 @@ import {
   AlertCircle,
   RefreshCw,
   ChevronDown,
+  ToggleLeft,
+  ToggleRight,
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { LoaderArc, LoaderShimmer } from "@/components/ui/sp-loaders";
@@ -36,6 +38,13 @@ interface AppUser {
   role: "USER" | "ADMIN";
   createdAt: string;
   _count: { posts: number; socialAccounts: number };
+}
+
+interface FeatureFlag {
+  id: string;
+  label: string;
+  description: string;
+  enabled: boolean;
 }
 
 /* ── Constants ─────────────────────────────────────────────────────── */
@@ -110,6 +119,159 @@ function SectionHeader({
         >
           {badge}
         </span>
+      )}
+    </div>
+  );
+}
+
+function FeatureFlagsSection() {
+  const [flags, setFlags] = useState<FeatureFlag[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [toggling, setToggling] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/feature-flags")
+      .then((r) => r.json())
+      .then((data) => setFlags(Array.isArray(data) ? data : []))
+      .catch(() => setError("Failed to load flags"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const toggle = async (flag: FeatureFlag) => {
+    setToggling(flag.id);
+    try {
+      const res = await fetch("/api/admin/feature-flags", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: flag.id, enabled: !flag.enabled }),
+      });
+      if (!res.ok) throw new Error("Toggle failed");
+      setFlags((prev) =>
+        prev.map((f) => (f.id === flag.id ? { ...f, enabled: !f.enabled } : f)),
+      );
+    } catch {
+      setError("Toggle failed");
+    } finally {
+      setToggling(null);
+    }
+  };
+
+  return (
+    <div className="sp-card" style={{ padding: "24px" }}>
+      <SectionHeader icon={ToggleRight} label="Feature Flags" />
+
+      {error && (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: "8px 12px",
+            borderRadius: 6,
+            background: "var(--sp-warn-soft)",
+            border: "1px solid var(--sp-warn)",
+            color: "var(--sp-warn)",
+            fontSize: 12,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
+          <AlertCircle style={{ width: 12, height: 12, flexShrink: 0 }} />
+          {error}
+        </div>
+      )}
+
+      {loading ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              style={{
+                height: 48,
+                borderRadius: 6,
+                background: "var(--paper-2)",
+                border: "1px solid var(--rule)",
+              }}
+            />
+          ))}
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          {flags.map((flag, i) => (
+            <div
+              key={flag.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 0",
+                borderBottom:
+                  i < flags.length - 1 ? "1px solid var(--rule)" : "none",
+                gap: 16,
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 500,
+                    color: "var(--ink)",
+                    marginBottom: 2,
+                  }}
+                >
+                  {flag.label}
+                </div>
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "var(--ink-3)",
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  {flag.description}
+                </div>
+              </div>
+              <button
+                onClick={() => toggle(flag)}
+                disabled={toggling === flag.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "5px 10px",
+                  borderRadius: 999,
+                  fontSize: 11,
+                  fontFamily: "var(--font-mono)",
+                  fontWeight: 500,
+                  border: `1px solid ${flag.enabled ? "var(--sp-positive)" : "var(--rule)"}`,
+                  background: flag.enabled
+                    ? "var(--sp-positive-soft, oklch(95% 0.05 145))"
+                    : "transparent",
+                  color: flag.enabled ? "var(--sp-positive)" : "var(--ink-3)",
+                  cursor: toggling === flag.id ? "wait" : "pointer",
+                  opacity: toggling === flag.id ? 0.5 : 1,
+                  flexShrink: 0,
+                  transition: "all 0.15s",
+                }}
+              >
+                {toggling === flag.id ? (
+                  <Loader2
+                    style={{
+                      width: 12,
+                      height: 12,
+                      animation: "spin 1s linear infinite",
+                    }}
+                  />
+                ) : flag.enabled ? (
+                  <ToggleRight style={{ width: 12, height: 12 }} />
+                ) : (
+                  <ToggleLeft style={{ width: 12, height: 12 }} />
+                )}
+                {flag.enabled ? "ON" : "OFF"}
+              </button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
@@ -823,6 +985,7 @@ export default function AdminPage() {
           Admin access — changes affect all users.
         </div>
 
+        <FeatureFlagsSection />
         <AIConfigSection />
         <UsersSection />
       </div>

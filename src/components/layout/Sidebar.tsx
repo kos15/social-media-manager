@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   PenTool,
@@ -45,6 +46,15 @@ const systemItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/ai-config")
+      .then((r) => {
+        if (r.ok) setIsAdmin(true);
+      })
+      .catch(() => {});
+  }, []);
 
   const isActive = (href: string) => href !== "#" && pathname.startsWith(href);
 
@@ -166,33 +176,40 @@ export function Sidebar() {
         ))}
       </div>
 
-      {/* System nav */}
-      <div style={{ padding: "0 14px 14px" }}>
-        <div
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: 10,
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
-            color: "var(--ink-3)",
-            padding: "0 12px 8px",
-          }}
-        >
-          System
-        </div>
-        {systemItems.map((item) => (
-          <Link
-            key={item.id}
-            href={item.href}
-            className={`sp-sidebar-link ${isActive(item.href) ? "active" : ""}`}
+      {/* System nav — admin only */}
+      {isAdmin && (
+        <div style={{ padding: "0 14px 14px" }}>
+          <div
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 10,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: "var(--ink-3)",
+              padding: "0 12px 8px",
+            }}
           >
-            <item.icon
-              style={{ width: 15, height: 15, strokeWidth: 1.5, flexShrink: 0 }}
-            />
-            {item.label}
-          </Link>
-        ))}
-      </div>
+            System
+          </div>
+          {systemItems.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              className={`sp-sidebar-link ${isActive(item.href) ? "active" : ""}`}
+            >
+              <item.icon
+                style={{
+                  width: 15,
+                  height: 15,
+                  strokeWidth: 1.5,
+                  flexShrink: 0,
+                }}
+              />
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* Footer / user */}
       <Link
