@@ -204,3 +204,9 @@ enum NotificationType {
   ACCOUNT_DISCONNECTED
   SYSTEM
 }
+
+model AppSetting {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
