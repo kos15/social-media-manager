@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -12,6 +12,7 @@ import {
   Sparkles,
   Image,
   X,
+  ShieldCheck,
 } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 
@@ -36,7 +37,16 @@ export function DashboardClientLayout({
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    fetch("/api/admin/ai-config")
+      .then((r) => {
+        if (r.ok) setIsAdmin(true);
+      })
+      .catch(() => {});
+  }, []);
 
   const isActive = (href: string) => href !== "#" && pathname.startsWith(href);
 
@@ -159,6 +169,32 @@ export function DashboardClientLayout({
               {item.label}
             </Link>
           ))}
+          {isAdmin && (
+            <>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 10,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.12em",
+                  color: "var(--ink-3)",
+                  padding: "12px 12px 8px",
+                }}
+              >
+                System
+              </div>
+              <Link
+                href="/admin"
+                onClick={() => setMobileOpen(false)}
+                className={`sp-sidebar-link ${isActive("/admin") ? "active" : ""}`}
+              >
+                <ShieldCheck
+                  style={{ width: 15, height: 15, strokeWidth: 1.5 }}
+                />
+                Admin
+              </Link>
+            </>
+          )}
         </nav>
       </div>
 
