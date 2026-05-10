@@ -16,6 +16,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { LoaderArc, LoaderShimmer } from "@/components/ui/sp-loaders";
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -573,18 +574,9 @@ function UsersSection() {
             alignItems: "center",
             justifyContent: "center",
             padding: "40px 0",
-            color: "var(--ink-4)",
-            gap: 8,
           }}
         >
-          <Loader2
-            style={{
-              width: 14,
-              height: 14,
-              animation: "spin 1s linear infinite",
-            }}
-          />
-          <span style={{ fontSize: 13 }}>Loading users…</span>
+          <LoaderShimmer width="100%" lines={4} />
         </div>
       ) : users.length === 0 ? (
         <div
@@ -783,25 +775,9 @@ export default function AdminPage() {
           alignItems: "center",
           justifyContent: "center",
           height: "100%",
-          gap: 10,
-          color: "var(--ink-4)",
         }}
       >
-        <Loader2
-          style={{
-            width: 16,
-            height: 16,
-            animation: "spin 1s linear infinite",
-          }}
-        />
-        <span style={{ fontSize: 13 }}>Checking access…</span>
-        <style jsx>{`
-          @keyframes spin {
-            to {
-              transform: rotate(360deg);
-            }
-          }
-        `}</style>
+        <LoaderArc size={72} label="Loading" />
       </div>
     );
   }
