@@ -55,7 +55,7 @@ export function DashboardClientLayout({
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 md:hidden"
+          className="fixed inset-0 z-40 lg:hidden"
           style={{ background: "oklch(0% 0 0 / 0.5)" }}
           onClick={() => setMobileOpen(false)}
         />
@@ -63,7 +63,7 @@ export function DashboardClientLayout({
 
       {/* Mobile drawer */}
       <div
-        className="md:hidden fixed inset-y-0 left-0 z-50 flex flex-col"
+        className="lg:hidden fixed inset-y-0 left-0 z-50 flex flex-col"
         style={{
           width: 232,
           background: "var(--paper)",
@@ -174,7 +174,7 @@ export function DashboardClientLayout({
       >
         {/* Mobile topbar */}
         <div
-          className="md:hidden"
+          className="lg:hidden"
           style={{
             height: 56,
             borderBottom: "1px solid var(--rule)",

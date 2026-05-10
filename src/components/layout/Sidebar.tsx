@@ -11,6 +11,7 @@ import {
   Sparkles,
   Image,
   Settings,
+  ShieldCheck,
 } from "lucide-react";
 
 const workspaceItems = [
@@ -38,6 +39,10 @@ const libraryItems = [
   { id: "media", label: "Media", href: "#", icon: Image, badge: null },
 ];
 
+const systemItems = [
+  { id: "admin", label: "Admin", href: "/admin", icon: ShieldCheck },
+];
+
 export function Sidebar() {
   const pathname = usePathname();
 
@@ -45,7 +50,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="hidden md:flex flex-col h-screen sticky top-0 flex-shrink-0"
+      className="hidden lg:flex flex-col h-screen sticky top-0 flex-shrink-0"
       style={{
         width: 232,
         borderRight: "1px solid var(--rule)",
@@ -148,6 +153,34 @@ export function Sidebar() {
           Library
         </div>
         {libraryItems.map((item) => (
+          <Link
+            key={item.id}
+            href={item.href}
+            className={`sp-sidebar-link ${isActive(item.href) ? "active" : ""}`}
+          >
+            <item.icon
+              style={{ width: 15, height: 15, strokeWidth: 1.5, flexShrink: 0 }}
+            />
+            {item.label}
+          </Link>
+        ))}
+      </div>
+
+      {/* System nav */}
+      <div style={{ padding: "0 14px 14px" }}>
+        <div
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+            color: "var(--ink-3)",
+            padding: "0 12px 8px",
+          }}
+        >
+          System
+        </div>
+        {systemItems.map((item) => (
           <Link
             key={item.id}
             href={item.href}
