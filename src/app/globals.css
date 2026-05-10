@@ -268,6 +268,9 @@
   background: var(--ink);
   border-radius: 0 1px 1px 0;
 }
+.sp-sidebar-footer:hover {
+  background: var(--paper-2);
+}
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

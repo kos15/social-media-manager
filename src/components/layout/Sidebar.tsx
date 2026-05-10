@@ -10,6 +10,7 @@ import {
   Link2,
   Sparkles,
   Image,
+  Settings,
 } from "lucide-react";
 
 const workspaceItems = [
@@ -23,6 +24,7 @@ const workspaceItems = [
   { id: "calendar", label: "Calendar", href: "/calendar", icon: Calendar },
   { id: "analytics", label: "Analytics", href: "/analytics", icon: BarChart2 },
   { id: "accounts", label: "Accounts", href: "/accounts", icon: Link2 },
+  { id: "settings", label: "Settings", href: "/settings", icon: Settings },
 ];
 
 const libraryItems = [
@@ -160,7 +162,8 @@ export function Sidebar() {
       </div>
 
       {/* Footer / user */}
-      <div
+      <Link
+        href="/settings"
         style={{
           marginTop: "auto",
           padding: "22px",
@@ -168,7 +171,10 @@ export function Sidebar() {
           display: "flex",
           alignItems: "center",
           gap: 10,
+          textDecoration: "none",
+          transition: "background 0.1s",
         }}
+        className="sp-sidebar-footer"
       >
         <div
           style={{
@@ -188,7 +194,7 @@ export function Sidebar() {
         >
           K
         </div>
-        <div style={{ lineHeight: 1.2 }}>
+        <div style={{ lineHeight: 1.2, flex: 1 }}>
           <div style={{ fontSize: 12, fontWeight: 500, color: "var(--ink)" }}>
             Account
           </div>
@@ -202,7 +208,8 @@ export function Sidebar() {
             Pro plan
           </div>
         </div>
-      </div>
+        <Settings style={{ width: 14, height: 14, color: "var(--ink-3)" }} />
+      </Link>
     </aside>
   );
 }
