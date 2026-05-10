@@ -4,24 +4,15 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-
 async function checkAdmin(req: NextRequest) {
   const supaUser = await getServerUser(req);
   if (!supaUser) return null;
 
-  if (ADMIN_EMAIL && supaUser.email === ADMIN_EMAIL) return supaUser;
-
-  try {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: supaUser.id },
-      select: { role: true },
-    });
-    if (dbUser?.role === "ADMIN") return supaUser;
-  } catch {
-    // DB may not have user yet
-  }
-  return null;
+  const dbUser = await prisma.user.findUnique({
+    where: { id: supaUser.id },
+    select: { role: true },
+  });
+  return dbUser?.role === "ADMIN" ? supaUser : null;
 }
 
 const DEFAULT_FLAGS: Record<

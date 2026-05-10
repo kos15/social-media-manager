@@ -4,27 +4,15 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-// ADMIN_EMAIL env var lets you bootstrap admin access before setting role in DB
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-
 async function checkAdmin(req: NextRequest) {
   const supaUser = await getServerUser(req);
   if (!supaUser) return null;
 
-  // Check by email env var (bootstrap)
-  if (ADMIN_EMAIL && supaUser.email === ADMIN_EMAIL) return supaUser;
-
-  // Check by DB role
-  try {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: supaUser.id },
-      select: { role: true },
-    });
-    if (dbUser?.role === "ADMIN") return supaUser;
-  } catch {
-    // DB may not have user yet
-  }
-  return null;
+  const dbUser = await prisma.user.findUnique({
+    where: { id: supaUser.id },
+    select: { role: true },
+  });
+  return dbUser?.role === "ADMIN" ? supaUser : null;
 }
 
 export async function GET(req: NextRequest) {
