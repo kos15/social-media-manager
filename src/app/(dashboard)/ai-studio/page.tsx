@@ -322,7 +322,7 @@ function YouTubePreview({ content }: { content: string }) {
   );
 }
 
-/* ── Skeleton shimmer ─────────────────────────────────────────────── */
+/* ── Logo loader ──────────────────────────────────────────────────── */
 
 function GeneratingSkeleton() {
   return (
@@ -330,40 +330,43 @@ function GeneratingSkeleton() {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: 12,
-        padding: "4px 0",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 16,
+        padding: "40px 0",
       }}
     >
-      {[90, 75, 60, 85, 50].map((w, i) => (
-        <div
-          key={i}
-          className="skeleton-shimmer"
+      <div className="logo-loader-ring">
+        <span
           style={{
-            height: 16,
-            borderRadius: 4,
-            width: `${w}%`,
-            animationDelay: `${i * 0.1}s`,
+            width: 56,
+            height: 56,
+            borderRadius: 12,
+            background: "var(--ink)",
+            color: "var(--paper)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "var(--font-display)",
+            fontStyle: "italic",
+            fontSize: 32,
+            flexShrink: 0,
           }}
-        />
-      ))}
-      <div
+          className="logo-loader-pulse"
+        >
+          S
+        </span>
+      </div>
+      <span
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          marginTop: 8,
-          color: "var(--ink-3)",
           fontSize: 12,
           fontFamily: "var(--font-mono)",
+          color: "var(--ink-3)",
+          letterSpacing: "0.06em",
         }}
       >
-        <div className="dot-wave">
-          <span />
-          <span />
-          <span />
-        </div>
         Generating…
-      </div>
+      </span>
     </div>
   );
 }
@@ -1503,52 +1506,46 @@ export default function AIStudioPage() {
             transform: rotate(360deg);
           }
         }
-        @keyframes shimmer {
-          0% {
-            background-position: -400px 0;
-          }
-          100% {
-            background-position: 400px 0;
-          }
-        }
-        @keyframes dotBounce {
+        @keyframes logoPulse {
           0%,
-          60%,
           100% {
-            transform: translateY(0);
+            transform: scale(1);
+            opacity: 1;
           }
-          30% {
-            transform: translateY(-5px);
+          50% {
+            transform: scale(0.92);
+            opacity: 0.7;
           }
         }
-        :global(.skeleton-shimmer) {
-          background: linear-gradient(
-            90deg,
-            var(--paper-3) 25%,
-            var(--paper-2) 50%,
-            var(--paper-3) 75%
-          );
-          background-size: 400px 100%;
-          animation: shimmer 1.4s infinite;
+        @keyframes logoRing {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
-        :global(.dot-wave) {
-          display: inline-flex;
+        :global(.logo-loader-pulse) {
+          animation: logoPulse 1.6s ease-in-out infinite;
+          display: flex !important;
+        }
+        :global(.logo-loader-ring) {
+          position: relative;
+          width: 72px;
+          height: 72px;
+          display: flex;
           align-items: center;
-          gap: 3px;
+          justify-content: center;
         }
-        :global(.dot-wave span) {
-          display: inline-block;
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-          background: var(--ink-3);
-          animation: dotBounce 1s infinite;
-        }
-        :global(.dot-wave span:nth-child(2)) {
-          animation-delay: 0.15s;
-        }
-        :global(.dot-wave span:nth-child(3)) {
-          animation-delay: 0.3s;
+        :global(.logo-loader-ring::before) {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 18px;
+          border: 2px solid transparent;
+          border-top-color: var(--ink);
+          border-right-color: var(--ink-3);
+          animation: logoRing 1.2s linear infinite;
         }
         @media (max-width: 768px) {
           .ai-layout {
