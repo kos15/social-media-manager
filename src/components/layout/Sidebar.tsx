@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
@@ -13,7 +13,9 @@ import {
   Image,
   Settings,
   ShieldCheck,
+  LogOut,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 const workspaceItems = [
   {
@@ -46,7 +48,14 @@ const systemItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
 
   useEffect(() => {
     fetch("/api/admin/ai-config")
@@ -212,54 +221,85 @@ export function Sidebar() {
       )}
 
       {/* Footer / user */}
-      <Link
-        href="/settings"
+      <div
         style={{
           marginTop: "auto",
-          padding: "22px",
+          padding: "14px 22px",
           borderTop: "1px solid var(--rule)",
           display: "flex",
           alignItems: "center",
           gap: 10,
-          textDecoration: "none",
-          transition: "background 0.1s",
         }}
-        className="sp-sidebar-footer"
       >
-        <div
+        <Link
+          href="/settings"
           style={{
-            width: 28,
-            height: 28,
-            borderRadius: "50%",
-            background: "var(--paper-3)",
-            border: "1px solid var(--rule)",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            textDecoration: "none",
+            flex: 1,
+            minWidth: 0,
+          }}
+          className="sp-sidebar-footer"
+        >
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              background: "var(--paper-3)",
+              border: "1px solid var(--rule)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "var(--font-mono)",
+              fontSize: 11,
+              color: "var(--ink-2)",
+              flexShrink: 0,
+            }}
+          >
+            K
+          </div>
+          <div style={{ lineHeight: 1.2, flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 12, fontWeight: 500, color: "var(--ink)" }}>
+              Account
+            </div>
+            <div
+              style={{
+                fontSize: 11,
+                color: "var(--ink-3)",
+                fontFamily: "var(--font-mono)",
+              }}
+            >
+              Pro plan
+            </div>
+          </div>
+        </Link>
+        <button
+          onClick={handleSignOut}
+          title="Sign out"
+          style={{
+            padding: 6,
+            borderRadius: 6,
+            border: "none",
+            background: "transparent",
+            color: "var(--ink-3)",
+            cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontFamily: "var(--font-mono)",
-            fontSize: 11,
-            color: "var(--ink-2)",
             flexShrink: 0,
+            transition: "color 0.15s",
           }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.color = "var(--sp-danger)")
+          }
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--ink-3)")}
         >
-          K
-        </div>
-        <div style={{ lineHeight: 1.2, flex: 1 }}>
-          <div style={{ fontSize: 12, fontWeight: 500, color: "var(--ink)" }}>
-            Account
-          </div>
-          <div
-            style={{
-              fontSize: 11,
-              color: "var(--ink-3)",
-              fontFamily: "var(--font-mono)",
-            }}
-          >
-            Pro plan
-          </div>
-        </div>
-        <Settings style={{ width: 14, height: 14, color: "var(--ink-3)" }} />
-      </Link>
+          <LogOut style={{ width: 14, height: 14 }} />
+        </button>
+      </div>
     </aside>
   );
 }

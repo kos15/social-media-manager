@@ -13,10 +13,12 @@ import {
   Bell,
   User,
   RefreshCw,
+  LogOut,
 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { LoaderRule } from "@/components/ui/sp-loaders";
+import { createClient } from "@/lib/supabase/client";
 
 type Platform = "TWITTER" | "LINKEDIN" | "INSTAGRAM" | "YOUTUBE";
 
@@ -412,6 +414,13 @@ function SettingsContent() {
       ? window.location.origin
       : "http://localhost:3000";
 
+  const router = useRouter();
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
   const TABS = [
     { id: "profile" as const, label: "Profile", icon: User },
     {
@@ -740,6 +749,66 @@ function SettingsContent() {
                       </label>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Session */}
+              <div className="sp-card" style={{ overflow: "hidden" }}>
+                <div
+                  style={{
+                    padding: "var(--pad-2)",
+                    borderBottom: "1px solid var(--rule)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <LogOut
+                    style={{ width: 14, height: 14, color: "var(--ink-3)" }}
+                  />
+                  <div
+                    style={{ fontFamily: "var(--font-display)", fontSize: 18 }}
+                  >
+                    Session
+                  </div>
+                </div>
+                <div
+                  style={{
+                    padding: "var(--pad-2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        marginBottom: 2,
+                      }}
+                    >
+                      Sign out
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--ink-3)" }}>
+                      End your current session on this device.
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="sp-btn"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      color: "var(--sp-danger)",
+                      borderColor: "var(--sp-danger)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <LogOut style={{ width: 13, height: 13 }} />
+                    Sign out
+                  </button>
                 </div>
               </div>
 

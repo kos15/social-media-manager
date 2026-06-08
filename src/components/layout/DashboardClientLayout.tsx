@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   PenTool,
@@ -13,9 +13,11 @@ import {
   Image,
   X,
   ShieldCheck,
+  LogOut,
 } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { SidebarContext } from "@/contexts/SidebarContext";
+import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
   {
@@ -40,6 +42,13 @@ export function DashboardClientLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
 
   useEffect(() => {
     fetch("/api/admin/ai-config")
@@ -200,6 +209,22 @@ export function DashboardClientLayout({
               </>
             )}
           </nav>
+          <div style={{ borderTop: "1px solid var(--rule)", padding: "14px" }}>
+            <button
+              onClick={handleSignOut}
+              className="sp-sidebar-link"
+              style={{
+                width: "100%",
+                color: "var(--sp-danger)",
+                border: "none",
+                background: "transparent",
+                cursor: "pointer",
+              }}
+            >
+              <LogOut style={{ width: 15, height: 15, strokeWidth: 1.5 }} />
+              Sign out
+            </button>
+          </div>
         </div>
 
         {/* Main content */}
