@@ -29,7 +29,7 @@ export function BottomDock() {
 
   return (
     <nav
-      className="lg:hidden"
+      className="flex lg:hidden"
       style={{
         position: "fixed",
         bottom: 0,
@@ -39,7 +39,6 @@ export function BottomDock() {
         height: 64,
         background: "var(--paper)",
         borderTop: "1px solid var(--rule)",
-        display: "flex",
         alignItems: "stretch",
         paddingBottom: "env(safe-area-inset-bottom)",
       }}

@@ -180,7 +180,7 @@ export default function ComposerPage() {
 
       {/* Mobile tab switcher */}
       <div
-        className="md:hidden"
+        className="lg:hidden"
         style={{
           display: "flex",
           borderBottom: "1px solid var(--rule)",
@@ -224,7 +224,7 @@ export default function ComposerPage() {
       >
         {/* Editor pane */}
         <div
-          className={mobileTab === "editor" ? "flex md:flex" : "hidden md:flex"}
+          className={mobileTab === "editor" ? "flex lg:flex" : "hidden lg:flex"}
           style={{
             padding: "var(--pad-3) var(--pad-4)",
             overflow: "auto",
@@ -441,7 +441,7 @@ export default function ComposerPage() {
         {/* Preview rail */}
         <div
           className={
-            mobileTab === "preview" ? "flex md:flex" : "hidden md:flex"
+            mobileTab === "preview" ? "flex lg:flex" : "hidden lg:flex"
           }
           style={{
             borderLeft: "1px solid var(--rule)",
@@ -663,7 +663,7 @@ export default function ComposerPage() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 768px) {
+        @media (max-width: 1023px) {
           .composer-layout {
             grid-template-columns: 1fr !important;
           }
