@@ -224,11 +224,10 @@ export default function ComposerPage() {
       >
         {/* Editor pane */}
         <div
-          className={mobileTab === "editor" ? "block" : "hidden md:flex"}
+          className={mobileTab === "editor" ? "flex md:flex" : "hidden md:flex"}
           style={{
             padding: "var(--pad-3) var(--pad-4)",
             overflow: "auto",
-            display: "flex",
             flexDirection: "column",
             gap: "var(--gap-3)",
           }}
@@ -441,11 +440,12 @@ export default function ComposerPage() {
 
         {/* Preview rail */}
         <div
-          className={mobileTab === "preview" ? "block" : "hidden md:flex"}
+          className={
+            mobileTab === "preview" ? "flex md:flex" : "hidden md:flex"
+          }
           style={{
             borderLeft: "1px solid var(--rule)",
             background: "var(--paper-2)",
-            display: "flex",
             flexDirection: "column",
             overflow: "hidden",
           }}
