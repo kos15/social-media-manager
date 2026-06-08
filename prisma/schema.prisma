@@ -23,9 +23,24 @@ model User {
   posts         Post[]
   teamMemberships TeamMember[]
   notifications Notification[]
-  
+  aiSetting     UserAISetting?
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model UserAISetting {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  provider     String?
+  model        String?
+  openaiKey    String?  @db.Text
+  anthropicKey String?  @db.Text
+  googleKey    String?  @db.Text
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  updatedAt    DateTime @updatedAt
 }
 
 enum UserRole {

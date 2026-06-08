@@ -14,6 +14,7 @@ import {
   User,
   RefreshCw,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -421,6 +422,121 @@ function SettingsContent() {
     router.push("/login");
   };
 
+  // AI Keys state
+  const AI_PROVIDERS_LIST = [
+    {
+      id: "openai",
+      label: "OpenAI",
+      models: [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-4-turbo",
+        "gpt-4-turbo-preview",
+        "gpt-4",
+        "gpt-4-32k",
+        "gpt-3.5-turbo",
+        "gpt-3.5-turbo-16k",
+      ],
+    },
+    {
+      id: "anthropic",
+      label: "Anthropic",
+      models: [
+        "claude-opus-4-6",
+        "claude-sonnet-4-6",
+        "claude-haiku-4-5-20251001",
+        "claude-3-5-sonnet-20241022",
+        "claude-3-5-haiku-20241022",
+        "claude-3-opus-20240229",
+        "claude-3-sonnet-20240229",
+        "claude-3-haiku-20240307",
+        "claude-2.1",
+        "claude-2.0",
+      ],
+    },
+    {
+      id: "gemini",
+      label: "Google Gemini",
+      models: [
+        "gemini-2.0-flash",
+        "gemini-1.5-pro",
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-8b",
+        "gemini-1.0-pro",
+        "gemini-pro",
+      ],
+    },
+  ];
+  const [aiProvider, setAiProvider] = useState("openai");
+  const [aiModel, setAiModel] = useState("gpt-4o-mini");
+  const [aiOpenAIKey, setAiOpenAIKey] = useState("");
+  const [aiAnthropicKey, setAiAnthropicKey] = useState("");
+  const [aiGoogleKey, setAiGoogleKey] = useState("");
+  const [aiKeyStatus, setAiKeyStatus] = useState<{
+    hasOpenAI: boolean;
+    hasAnthropic: boolean;
+    hasGoogle: boolean;
+  }>({ hasOpenAI: false, hasAnthropic: false, hasGoogle: false });
+  const [aiSaving, setAiSaving] = useState(false);
+  const [aiSaved, setAiSaved] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [showAiKeys, setShowAiKeys] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/user/ai-settings")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.provider) setAiProvider(d.provider);
+        if (d.model) setAiModel(d.model);
+        setAiKeyStatus({
+          hasOpenAI: d.hasOpenAIKey,
+          hasAnthropic: d.hasAnthropicKey,
+          hasGoogle: d.hasGoogleKey,
+        });
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleAISave = async () => {
+    setAiSaving(true);
+    setAiError(null);
+    try {
+      const body: Record<string, string> = {
+        provider: aiProvider,
+        model: aiModel,
+      };
+      if (aiOpenAIKey) body.openaiKey = aiOpenAIKey;
+      if (aiAnthropicKey) body.anthropicKey = aiAnthropicKey;
+      if (aiGoogleKey) body.googleKey = aiGoogleKey;
+      const res = await fetch("/api/user/ai-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      setAiSaved(true);
+      setAiOpenAIKey("");
+      setAiAnthropicKey("");
+      setAiGoogleKey("");
+      setTimeout(() => setAiSaved(false), 3000);
+      // Refresh key status
+      const fresh = await fetch("/api/user/ai-settings").then((r) => r.json());
+      setAiKeyStatus({
+        hasOpenAI: fresh.hasOpenAIKey,
+        hasAnthropic: fresh.hasAnthropicKey,
+        hasGoogle: fresh.hasGoogleKey,
+      });
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setAiSaving(false);
+    }
+  };
+
+  const currentAiProviderData = AI_PROVIDERS_LIST.find(
+    (p) => p.id === aiProvider,
+  );
+
   const TABS = [
     { id: "profile" as const, label: "Profile", icon: User },
     {
@@ -750,6 +866,344 @@ function SettingsContent() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* AI Keys */}
+              <div className="sp-card" style={{ overflow: "hidden" }}>
+                <div
+                  style={{
+                    padding: "var(--pad-2)",
+                    borderBottom: "1px solid var(--rule)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    <Sparkles
+                      style={{ width: 14, height: 14, color: "var(--ink-3)" }}
+                    />
+                    <div
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: 18,
+                      }}
+                    >
+                      AI Keys
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowAiKeys((v) => !v)}
+                    className="sp-btn sp-btn-ghost"
+                    style={{ fontSize: 12 }}
+                  >
+                    {showAiKeys ? "Hide" : "Configure"}
+                  </button>
+                </div>
+
+                {/* Key status badges */}
+                <div
+                  style={{
+                    padding: "12px var(--pad-2)",
+                    display: "flex",
+                    gap: 8,
+                    flexWrap: "wrap",
+                    borderBottom: showAiKeys ? "1px solid var(--rule)" : "none",
+                  }}
+                >
+                  {[
+                    { label: "OpenAI", active: aiKeyStatus.hasOpenAI },
+                    { label: "Anthropic", active: aiKeyStatus.hasAnthropic },
+                    { label: "Google", active: aiKeyStatus.hasGoogle },
+                  ].map((k) => (
+                    <span
+                      key={k.label}
+                      style={{
+                        fontSize: 11,
+                        fontFamily: "var(--font-mono)",
+                        padding: "3px 8px",
+                        borderRadius: 999,
+                        border: "1px solid var(--rule)",
+                        color: k.active ? "var(--sp-positive)" : "var(--ink-3)",
+                        background: k.active
+                          ? "var(--sp-positive-soft, var(--paper-2))"
+                          : "transparent",
+                      }}
+                    >
+                      {k.active ? "✓" : "–"} {k.label}
+                    </span>
+                  ))}
+                  {aiProvider && (
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontFamily: "var(--font-mono)",
+                        color: "var(--ink-3)",
+                        marginLeft: "auto",
+                      }}
+                    >
+                      Active: {aiProvider} / {aiModel}
+                    </span>
+                  )}
+                </div>
+
+                {showAiKeys && (
+                  <div
+                    style={{
+                      padding: "var(--pad-2)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "var(--gap-2)",
+                    }}
+                  >
+                    {/* Provider + Model */}
+                    <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                      <div style={{ flex: 1, minWidth: 140 }}>
+                        <label
+                          style={{
+                            display: "block",
+                            fontSize: 12,
+                            fontFamily: "var(--font-mono)",
+                            color: "var(--ink-3)",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            marginBottom: 8,
+                          }}
+                        >
+                          Provider
+                        </label>
+                        <select
+                          value={aiProvider}
+                          onChange={(e) => {
+                            setAiProvider(e.target.value);
+                            const p = AI_PROVIDERS_LIST.find(
+                              (x) => x.id === e.target.value,
+                            );
+                            if (p) setAiModel(p.models[0]);
+                          }}
+                          style={{
+                            width: "100%",
+                            padding: "10px 14px",
+                            borderRadius: 6,
+                            border: "1px solid var(--rule)",
+                            background: "var(--paper)",
+                            color: "var(--ink)",
+                            fontSize: 13,
+                            fontFamily: "inherit",
+                          }}
+                        >
+                          {AI_PROVIDERS_LIST.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 140 }}>
+                        <label
+                          style={{
+                            display: "block",
+                            fontSize: 12,
+                            fontFamily: "var(--font-mono)",
+                            color: "var(--ink-3)",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            marginBottom: 8,
+                          }}
+                        >
+                          Model
+                        </label>
+                        <select
+                          value={aiModel}
+                          onChange={(e) => setAiModel(e.target.value)}
+                          style={{
+                            width: "100%",
+                            padding: "10px 14px",
+                            borderRadius: 6,
+                            border: "1px solid var(--rule)",
+                            background: "var(--paper)",
+                            color: "var(--ink)",
+                            fontSize: 13,
+                            fontFamily: "inherit",
+                          }}
+                        >
+                          {(currentAiProviderData?.models || []).map((m) => (
+                            <option key={m} value={m}>
+                              {m}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* API Keys */}
+                    {[
+                      {
+                        id: "openai",
+                        label: "OpenAI API Key",
+                        value: aiOpenAIKey,
+                        set: setAiOpenAIKey,
+                        has: aiKeyStatus.hasOpenAI,
+                        placeholder: "sk-...",
+                      },
+                      {
+                        id: "anthropic",
+                        label: "Anthropic API Key",
+                        value: aiAnthropicKey,
+                        set: setAiAnthropicKey,
+                        has: aiKeyStatus.hasAnthropic,
+                        placeholder: "sk-ant-...",
+                      },
+                      {
+                        id: "gemini",
+                        label: "Google AI API Key",
+                        value: aiGoogleKey,
+                        set: setAiGoogleKey,
+                        has: aiKeyStatus.hasGoogle,
+                        placeholder: "AIza...",
+                      },
+                    ].map((field) => (
+                      <div key={field.id}>
+                        <label
+                          style={{
+                            display: "block",
+                            fontSize: 12,
+                            fontFamily: "var(--font-mono)",
+                            color: "var(--ink-3)",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                            marginBottom: 8,
+                          }}
+                        >
+                          {field.label}
+                          {field.has && (
+                            <span
+                              style={{
+                                color: "var(--sp-positive)",
+                                marginLeft: 8,
+                              }}
+                            >
+                              ✓ saved
+                            </span>
+                          )}
+                        </label>
+                        <div style={{ position: "relative" }}>
+                          <input
+                            type={showAiKeys ? "text" : "password"}
+                            value={field.value}
+                            onChange={(e) => field.set(e.target.value)}
+                            placeholder={
+                              field.has
+                                ? "Leave blank to keep existing key"
+                                : field.placeholder
+                            }
+                            style={{
+                              width: "100%",
+                              padding: "10px 14px",
+                              borderRadius: 6,
+                              border: "1px solid var(--rule)",
+                              background: "var(--paper)",
+                              color: "var(--ink)",
+                              fontSize: 13,
+                              fontFamily: "var(--font-mono)",
+                              boxSizing: "border-box",
+                            }}
+                            onFocus={(e) =>
+                              (e.currentTarget.style.borderColor =
+                                "var(--ink-3)")
+                            }
+                            onBlur={(e) =>
+                              (e.currentTarget.style.borderColor =
+                                "var(--rule)")
+                            }
+                          />
+                        </div>
+                      </div>
+                    ))}
+
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "var(--ink-3)",
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      Keys are stored encrypted per-account. If no key is set
+                      here, the app falls back to environment variables.
+                    </div>
+
+                    {aiError && (
+                      <div
+                        style={{
+                          padding: "10px 14px",
+                          borderRadius: 6,
+                          background: "var(--sp-warn-soft)",
+                          border: "1px solid var(--sp-warn)",
+                          color: "var(--sp-danger)",
+                          fontSize: 12.5,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                        }}
+                      >
+                        <AlertCircle
+                          style={{ width: 13, height: 13, flexShrink: 0 }}
+                        />
+                        {aiError}
+                      </div>
+                    )}
+
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: 8,
+                        alignItems: "center",
+                      }}
+                    >
+                      {aiSaved && (
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            fontSize: 12,
+                            color: "var(--sp-positive)",
+                          }}
+                        >
+                          <CheckCircle style={{ width: 13, height: 13 }} />{" "}
+                          Saved
+                        </span>
+                      )}
+                      <button
+                        onClick={handleAISave}
+                        disabled={aiSaving}
+                        className="sp-btn sp-btn-primary"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          opacity: aiSaving ? 0.6 : 1,
+                        }}
+                      >
+                        {aiSaving ? (
+                          <Loader2
+                            style={{
+                              width: 13,
+                              height: 13,
+                              animation: "spin 1s linear infinite",
+                            }}
+                          />
+                        ) : (
+                          <Save style={{ width: 13, height: 13 }} />
+                        )}
+                        {aiSaving ? "Saving…" : "Save AI settings"}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Session */}
