@@ -31,12 +31,24 @@ export function PageHeader({
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          gap: 2,
+          alignItems: "baseline",
+          gap: 10,
           flex: 1,
           minWidth: 0,
         }}
       >
+        <div
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: 22,
+            letterSpacing: "-0.02em",
+            lineHeight: 1,
+            color: "var(--ink)",
+            flexShrink: 0,
+          }}
+        >
+          {title}
+        </div>
         <div
           style={{
             fontFamily: "var(--font-mono)",
@@ -45,20 +57,12 @@ export function PageHeader({
             letterSpacing: "0.12em",
             color: "var(--ink-3)",
             lineHeight: 1,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
           {crumb}
-        </div>
-        <div
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: 22,
-            letterSpacing: "-0.02em",
-            lineHeight: 1,
-            color: "var(--ink)",
-          }}
-        >
-          {title}
         </div>
       </div>
       <div
