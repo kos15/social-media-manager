@@ -39,3 +39,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local dev scripts
+query.js
+query.ts
+queryAll.js
+queryAll.ts
+test.js
+test-post.js
+
+# local db
+prisma/dev.db
+prisma/dev.db-journal
+
+# claude
+.claude/
