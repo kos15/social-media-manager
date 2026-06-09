@@ -237,6 +237,7 @@ export default function SignupPage() {
 
       {/* Right panel — form */}
       <div
+        className="signup-right"
         style={{
           flex: 1,
           display: "flex",
@@ -254,7 +255,7 @@ export default function SignupPage() {
               alignItems: "center",
               gap: 10,
               textDecoration: "none",
-              marginBottom: 40,
+              marginBottom: 28,
             }}
             className="md:hidden"
           >
@@ -304,7 +305,7 @@ export default function SignupPage() {
           <h1
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: 36,
+              fontSize: "clamp(26px, 8vw, 36px)",
               fontWeight: 400,
               letterSpacing: "-0.02em",
               margin: "0 0 8px",
@@ -610,6 +611,13 @@ export default function SignupPage() {
         @keyframes spin {
           to {
             transform: rotate(360deg);
+          }
+        }
+        @media (max-width: 639px) {
+          .signup-right {
+            padding: 24px 20px !important;
+            align-items: flex-start !important;
+            overflow-y: auto;
           }
         }
       `}</style>
