@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   RefreshCw,
   Clock,
@@ -14,6 +14,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { usePostStore } from "@/store/usePostStore";
 
 const PLATFORMS = [
   {
@@ -121,19 +122,48 @@ function Glyph({
   );
 }
 
+const STORE_TO_COMPOSER: Record<string, string> = {
+  TWITTER: "x",
+  LINKEDIN: "in",
+  INSTAGRAM: "ig",
+  YOUTUBE: "yt",
+};
+
 export default function ComposerPage() {
-  const [text, setText] = useState(SAMPLE);
-  const [selected, setSelected] = useState<Record<string, boolean>>({
-    x: true,
-    in: true,
-    ig: false,
-    yt: true,
+  const {
+    currentPost,
+    selectedPlatforms: storePlatforms,
+    resetPost,
+  } = usePostStore();
+
+  const [text, setText] = useState(() => currentPost || SAMPLE);
+  const [selected, setSelected] = useState<Record<string, boolean>>(() => {
+    if (storePlatforms.length > 0) {
+      const mapped: Record<string, boolean> = {
+        x: false,
+        in: false,
+        ig: false,
+        yt: false,
+      };
+      storePlatforms.forEach((p) => {
+        const key = STORE_TO_COMPOSER[p];
+        if (key) mapped[key] = true;
+      });
+      return mapped;
+    }
+    return { x: true, in: true, ig: false, yt: true };
   });
   const [tone, setTone] = useState("Confident");
   const [slashOpen, setSlashOpen] = useState(false);
   const [activePreview, setActivePreview] = useState("x");
   const [mobileTab, setMobileTab] = useState<"editor" | "preview">("editor");
   const taRef = useRef<HTMLTextAreaElement>(null);
+
+  // Clear store after reading so next fresh visit starts blank
+  useEffect(() => {
+    if (currentPost) resetPost();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const v = e.target.value;

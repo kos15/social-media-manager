@@ -715,6 +715,53 @@ function AdminPanel() {
 
 /* ── Main page ───────────────────────────────────────────────────── */
 
+const HISTORY_KEY = "ai_studio_history";
+const MAX_HISTORY = 3;
+
+interface GenerationEntry {
+  id: string;
+  prompt: string;
+  type: TabId;
+  tone: string;
+  platforms: string[];
+  result: string;
+  timestamp: number;
+}
+
+function loadHistory(): GenerationEntry[] {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveToHistory(
+  entry: Omit<GenerationEntry, "id" | "timestamp">,
+  result: string,
+) {
+  const history = loadHistory();
+  const newEntry: GenerationEntry = {
+    id: Date.now().toString(),
+    ...entry,
+    result,
+    timestamp: Date.now(),
+  };
+  const updated = [newEntry, ...history].slice(0, MAX_HISTORY);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+  return updated;
+}
+
+function formatRelativeTime(ts: number): string {
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
 export default function AIStudioPage() {
   const router = useRouter();
   const { resetPost, setPostContent, togglePlatform } = usePostStore();
@@ -732,15 +779,17 @@ export default function AIStudioPage() {
   ]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
+  const [history, setHistory] = useState<GenerationEntry[]>([]);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  // Check admin status silently
+  // Check admin status silently + load history
   useEffect(() => {
     fetch("/api/admin/ai-config")
       .then((r) => {
         if (r.ok) setIsAdmin(true);
       })
       .catch(() => {});
+    setHistory(loadHistory());
   }, []);
 
   const togglePlatformSelection = (id: string) => {
@@ -782,8 +831,14 @@ export default function AIStudioPage() {
         setResult(accumulated);
       }
 
+      // Save to localStorage history
+      const updated = saveToHistory(
+        { prompt, type: activeTab, tone, platforms: selectedPlatforms },
+        accumulated,
+      );
+      setHistory(updated);
+
       setMobileTab("output");
-      // Scroll output into view on mobile
       setTimeout(
         () => resultRef.current?.scrollIntoView({ behavior: "smooth" }),
         100,
@@ -815,7 +870,6 @@ export default function AIStudioPage() {
   };
 
   const handleEditInComposer = () => {
-    // For multi-platform results, use the first platform's parsed content
     const firstPlatform = selectedPlatforms[0];
     const content =
       selectedPlatforms.length > 1 && platformContent[firstPlatform]
@@ -825,6 +879,16 @@ export default function AIStudioPage() {
     setPostContent(content);
     selectedPlatforms.forEach((p) => togglePlatform(p));
     router.push("/composer");
+  };
+
+  const restoreFromHistory = (entry: GenerationEntry) => {
+    setPrompt(entry.prompt);
+    setActiveTab(entry.type);
+    setTone(entry.tone);
+    setSelectedPlatforms(entry.platforms);
+    setResult(entry.result);
+    setGenError(null);
+    setMobileTab("output");
   };
 
   const inputStyle = {
@@ -1192,6 +1256,154 @@ export default function AIStudioPage() {
             )}
             {isGenerating ? "Generating…" : "Generate"}
           </button>
+
+          {/* ── History ──────────────────────────────────────────── */}
+          {history.length > 0 && (
+            <div>
+              <div
+                className="eyebrow"
+                style={{
+                  marginBottom: 8,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span>Recent generations</span>
+                <button
+                  style={{
+                    fontSize: 10,
+                    fontFamily: "var(--font-mono)",
+                    color: "var(--ink-4)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    localStorage.removeItem(HISTORY_KEY);
+                    setHistory([]);
+                  }}
+                >
+                  clear
+                </button>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {history.map((entry) => {
+                  const platformMeta = entry.platforms
+                    .map((p) => PLATFORMS.find((x) => x.id === p))
+                    .filter(Boolean);
+                  return (
+                    <button
+                      key={entry.id}
+                      onClick={() => restoreFromHistory(entry)}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 4,
+                        padding: "10px 12px",
+                        borderRadius: 7,
+                        border: "1px solid var(--rule)",
+                        background: "var(--paper-2)",
+                        cursor: "pointer",
+                        textAlign: "left",
+                        transition: "border-color 0.1s",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.borderColor = "var(--ink-3)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.borderColor = "var(--rule)")
+                      }
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 4,
+                          }}
+                        >
+                          {platformMeta.map(
+                            (m) =>
+                              m && (
+                                <m.Icon
+                                  key={m.id}
+                                  style={{
+                                    width: 11,
+                                    height: 11,
+                                    color: m.color,
+                                  }}
+                                />
+                              ),
+                          )}
+                          <span
+                            style={{
+                              fontSize: 10,
+                              fontFamily: "var(--font-mono)",
+                              color: "var(--ink-3)",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.06em",
+                            }}
+                          >
+                            {entry.type}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: 10,
+                              fontFamily: "var(--font-mono)",
+                              color: "var(--ink-4)",
+                            }}
+                          >
+                            ·
+                          </span>
+                          <span
+                            style={{
+                              fontSize: 10,
+                              fontFamily: "var(--font-mono)",
+                              color: "var(--ink-4)",
+                            }}
+                          >
+                            {entry.tone}
+                          </span>
+                        </div>
+                        <span
+                          style={{
+                            fontSize: 10,
+                            fontFamily: "var(--font-mono)",
+                            color: "var(--ink-4)",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {formatRelativeTime(entry.timestamp)}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 12,
+                          color: "var(--ink-2)",
+                          lineHeight: 1.4,
+                          overflow: "hidden",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical" as const,
+                        }}
+                      >
+                        {entry.prompt}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ── RIGHT: Output panel ───────────────────────────────── */}
