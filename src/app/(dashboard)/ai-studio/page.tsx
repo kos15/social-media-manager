@@ -12,6 +12,7 @@ import {
   RefreshCcw,
   Loader2,
   CalendarPlus,
+  Pencil,
   Twitter,
   Linkedin,
   Instagram,
@@ -802,18 +803,29 @@ export default function AIStudioPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const platformContent = result
+    ? parseByPlatform(result, selectedPlatforms)
+    : {};
+
   const handleSchedule = () => {
-    // Pre-fill composer: reset store, set content + platforms
     resetPost();
     setPostContent(result);
-    // Toggle on the selected platforms (store is empty after reset)
     selectedPlatforms.forEach((p) => togglePlatform(p));
     router.push("/composer");
   };
 
-  const platformContent = result
-    ? parseByPlatform(result, selectedPlatforms)
-    : {};
+  const handleEditInComposer = () => {
+    // For multi-platform results, use the first platform's parsed content
+    const firstPlatform = selectedPlatforms[0];
+    const content =
+      selectedPlatforms.length > 1 && platformContent[firstPlatform]
+        ? platformContent[firstPlatform]
+        : result;
+    resetPost();
+    setPostContent(content);
+    selectedPlatforms.forEach((p) => togglePlatform(p));
+    router.push("/composer");
+  };
 
   const inputStyle = {
     width: "100%",
@@ -1409,6 +1421,14 @@ export default function AIStudioPage() {
               >
                 <CalendarPlus style={{ width: 13, height: 13 }} />
                 Schedule post
+              </button>
+              <button
+                className="sp-btn sp-btn-ghost"
+                onClick={handleEditInComposer}
+                style={{ display: "flex", alignItems: "center", gap: 6 }}
+              >
+                <Pencil style={{ width: 13, height: 13 }} />
+                Edit in Composer
               </button>
               <button
                 className="sp-btn sp-btn-ghost"

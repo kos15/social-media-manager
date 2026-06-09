@@ -10,13 +10,34 @@ import { decryptKey } from "@/lib/encrypt";
 export const dynamic = "force-dynamic";
 
 const PLATFORM_PROMPTS: Record<string, string> = {
-  TWITTER: "Max 280 characters, punchy hook, 1-3 hashtags. Extremely concise.",
-  LINKEDIN:
-    "Professional, 150-300 words, strong opening hook, end with call-to-action, 3-5 hashtags.",
-  INSTAGRAM:
-    "Visual and engaging, natural emojis, 100-200 word caption, 10-15 hashtags at the end.",
-  YOUTUBE:
-    "First line = compelling video title. Then 2-3 paragraph description. Then comma-separated tags line.",
+  TWITTER: [
+    "HARD LIMIT: 280 characters total including hashtags — count every character before outputting.",
+    "Structure: Line 1 = scroll-stopping hook (bold claim, stat, or question, max 120 chars). Lines 2-3 = one supporting fact or micro-CTA only if chars remain. Final: 1-3 niche hashtags.",
+    "CTR rules: lead with the most specific number or surprising fact. Use power openers: 'How', 'Why', exact percentages. No filler: 'really', 'very', 'amazing'. Niche hashtags (#ContentMarketing) over generic (#Marketing).",
+    "Readability: max 2 sentences. Every word must earn its place.",
+  ].join(" "),
+
+  LINKEDIN: [
+    "TARGET: 150-250 words. HARD LIMIT: 3,000 characters.",
+    "Structure: Line 1 = bold specific hook visible before 'see more' — make it unmissable. Blank line. Lines 2-4 = insight or data in short paragraphs (2-3 lines max, heavy line breaks). Blank line. 1 key takeaway bolded. Blank line. CTA = question or action directive. Blank line. 3-5 hashtags on last line.",
+    "SEO/CTR rules: embed 1-2 primary keywords naturally in first 2 sentences (LinkedIn indexes these). Use specific outcomes ('increased revenue 40%' not 'improved results'). Personal voice: 'I', 'we', 'you'. No jargon: no 'synergy', 'leverage', 'ecosystem'. Data and specificity massively boost engagement.",
+    "Readability: sentences under 20 words. No walls of text. Short paragraphs.",
+  ].join(" "),
+
+  INSTAGRAM: [
+    "TARGET: 100-200 words. HARD LIMIT: 2,200 characters.",
+    "Structure: Line 1 = hook visible in feed before 'more' (emotion, relatability, bold statement). Blank line. Lines 2-6 = story or value in short conversational paragraphs. Blank line. CTA: ask to save, share, or comment (saves = highest engagement signal). 5 blank lines to push hashtags below fold. Then 20-30 hashtags: 5 niche (<100k posts), 10 mid (100k-1M), 5 broad (1M+).",
+    "CTR rules: first 125 characters are critical — they appear in feed. Emojis: 4-8 max, placed naturally inline not just at end. Use 'save this post' or 'share with someone who needs it'. Keep hashtags after the CTA, never in body text.",
+    "Readability: conversational, like texting a smart friend. Short sentences.",
+  ].join(" "),
+
+  YOUTUBE: [
+    "OUTPUT FORMAT — three sections in this exact order:",
+    "TITLE (line 1): 60-70 chars, front-load primary keyword. Proven formats: '[Number] [Topic] That [Outcome]' / 'How [Action] [Benefit]' / 'Why [Claim]'. Maximize CTR with specificity, curiosity gap, or emotional trigger. No misleading clickbait.",
+    "DESCRIPTION (after one blank line): First 125 chars = restate hook + primary keyword (visible before Show more). Paragraph 1 (2-3 sentences): what viewer learns. Paragraph 2 (2-3 sentences): supporting detail or credibility. CTA: subscribe + link-in-bio line. Optional timestamps: '0:00 Intro'. Total: 200-400 words.",
+    "TAGS (final line, comma-separated, no # symbol): 10-15 tags mixing exact-match search phrases, synonyms, related topics, and long-tail variations.",
+    "SEO rules: YouTube ranks on title + first 100 chars of description + tags. First tag = exact phrase viewers type. Natural language only, no keyword stuffing.",
+  ].join(" "),
 };
 
 function defaultModel(provider: string) {
@@ -177,13 +198,32 @@ export async function POST(req: NextRequest) {
           }`
         : "";
 
-    const systemPrompt = `You are an expert social media strategist and copywriter. Generate ${typeDesc} with a ${tone} tone.${platformSection}
+    const toneGuide: Record<string, string> = {
+      Confident:
+        "Direct, assertive, authoritative. State facts as facts. No hedging ('might', 'maybe', 'could'). Commands and declarations.",
+      Warm: "Empathetic, encouraging, human. Use 'you' and 'we'. Conversational but purposeful. Feels like advice from a trusted friend.",
+      Witty:
+        "Sharp, clever, slightly irreverent. One unexpected angle or subverted expectation. Light humor without sacrificing substance.",
+      Reportorial:
+        "Precise, data-led, journalistic. Lead with the most important fact. Attribution and specificity over opinion. Neutral but compelling.",
+      Inspiring:
+        "Motivational, forward-looking, emotionally resonant. Paint a vision. Use active verbs. End on possibility, not problem.",
+    };
 
-Rules:
-- Output only the post content, no meta-commentary
-- For multiple platforms use the ---PLATFORM_NAME--- separator exactly
-- Match each platform's native style and character limits
-- Make every word count`;
+    const systemPrompt = `You are an expert social media strategist, copywriter, and SEO specialist with deep knowledge of each platform's algorithm and audience behavior.
+
+TONE: ${tone} — ${toneGuide[tone] || tone}
+
+TASK: Generate ${typeDesc}.${platformSection}
+
+UNIVERSAL RULES (non-negotiable):
+- Output ONLY the post content — zero meta-commentary, no "Here's your post:", no explanations
+- For multiple platforms use ---PLATFORM_NAME--- separator exactly as specified
+- Strictly enforce every platform's character limit — count characters before finalizing
+- Eliminate ALL filler: "really", "very", "basically", "amazing", "great", "awesome"
+- Every sentence must carry information, emotion, or drive action — cut anything that doesn't
+- Use specific numbers, names, and outcomes over vague claims
+- Apply the selected tone consistently throughout all output`;
 
     const messages = [
       new SystemMessage(systemPrompt),
