@@ -182,22 +182,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const typeDesc =
-      type === "caption"
-        ? "engaging social media captions"
-        : type === "hashtag"
-          ? "relevant hashtag sets"
-          : "repurposed content adapted for the target platform";
-
-    const platformSection =
-      platforms.length > 0
-        ? `\n\nTarget platforms: ${platforms.join(", ")}.\n${
-            platforms.length > 1
-              ? `Generate separate content for EACH platform using this exact separator format:\n---PLATFORM_NAME---\n[content]\n\nPlatform-specific requirements:\n${platforms.map((p: string) => `• ${p}: ${PLATFORM_PROMPTS[p] || p}`).join("\n")}`
-              : `Platform requirement: ${PLATFORM_PROMPTS[platforms[0]] || ""}`
-          }`
-        : "";
-
     const toneGuide: Record<string, string> = {
       Confident:
         "Direct, assertive, authoritative. State facts as facts. No hedging ('might', 'maybe', 'could'). Commands and declarations.",
@@ -210,11 +194,89 @@ export async function POST(req: NextRequest) {
         "Motivational, forward-looking, emotionally resonant. Paint a vision. Use active verbs. End on possibility, not problem.",
     };
 
-    const systemPrompt = `You are an expert social media strategist, copywriter, and SEO specialist with deep knowledge of each platform's algorithm and audience behavior.
+    const HASHTAG_PLATFORM_RULES: Record<string, string> = {
+      TWITTER:
+        "1-3 hashtags only. Each must be high-signal and directly searchable. Avoid generic tags.",
+      LINKEDIN:
+        "3-5 hashtags. Mix professional niche tags with broader industry terms. All lowercase.",
+      INSTAGRAM:
+        "20-30 hashtags. Mix: 5 niche (<100k), 10 mid-tier (100k-1M), 5 broad (1M+), 5 community-specific.",
+      YOUTUBE:
+        "8-12 hashtags placed at the end of description. Focus on searchable topic phrases, not single words.",
+    };
+
+    let systemPrompt: string;
+
+    if (type === "hashtag") {
+      const platformHashtagSection =
+        platforms.length > 0
+          ? `\n\nTarget platforms: ${platforms.join(", ")}.${
+              platforms.length > 1
+                ? `\nGenerate separate hashtag sets for EACH platform using this exact separator:\n---PLATFORM_NAME---\n[hashtags]\n\nPer-platform hashtag counts:\n${platforms.map((p: string) => `• ${p}: ${HASHTAG_PLATFORM_RULES[p] || "5-10 relevant hashtags"}`).join("\n")}`
+                : `\nPlatform rule: ${HASHTAG_PLATFORM_RULES[platforms[0]] || ""}`
+            }`
+          : "";
+
+      systemPrompt = `You are a social media SEO specialist with deep expertise in hashtag strategy and discoverability algorithms.
+
+TASK: Generate a targeted hashtag set for the provided content.${platformHashtagSection}
+
+OUTPUT FORMAT (follow exactly):
+For each hashtag, output on its own line:
+#hashtag — one sentence explaining why this hashtag will drive reach or engagement (e.g., audience size, trending status, niche relevance, algorithm boost).
+
+Example:
+#ContentMarketing — 2.1M posts; bridges marketing pros actively looking for strategy tips — high-intent audience for this topic.
+#BuildInPublic — fast-growing indie/SaaS community; posts here get high organic resharing from founders.
+
+RULES:
+- Output ONLY the hashtag lines — no intro, no section headers, no closing remarks
+- For multiple platforms use ---PLATFORM_NAME--- separator before each platform's list
+- Choose hashtags that match the content topic precisely — no vanity tags
+- Prioritize hashtags where the content can realistically rank or be discovered
+- Include a mix of sizes (niche to broad) unless platform rules specify otherwise
+- All hashtags lowercase unless proper noun`;
+    } else if (type === "repurpose") {
+      const platformRepurposeSection =
+        platforms.length > 0
+          ? `\n\nTarget platform(s): ${platforms.join(", ")}.${
+              platforms.length > 1
+                ? `\nRewrite for EACH platform using this exact separator:\n---PLATFORM_NAME---\n[rewritten content]\n\nPlatform-specific formatting:\n${platforms.map((p: string) => `• ${p}: ${PLATFORM_PROMPTS[p] || p}`).join("\n")}`
+                : `\nPlatform format to follow: ${PLATFORM_PROMPTS[platforms[0]] || ""}`
+            }`
+          : "";
+
+      systemPrompt = `You are an expert copywriter and content strategist specialising in rewriting and tone transformation.
+
+TONE TO APPLY: ${tone} — ${toneGuide[tone] || tone}
+
+TASK: Rewrite the provided post in the specified tone while preserving all factual content, key messages, and intent. This is a tone transformation, not a content change.${platformRepurposeSection}
+
+REWRITE RULES:
+- Preserve every fact, statistic, and claim from the original — do not invent or remove information
+- Transform sentence structure, word choice, and voice to match the target tone precisely
+- Adapt formatting and length to fit the target platform's native style
+- If the original is informal and tone is Reportorial, restructure sentences to be precise and data-led
+- If the original is dry and tone is Witty, inject one unexpected angle without distorting facts
+- Remove filler words regardless of original: "really", "very", "basically", "just", "amazing"
+- Output ONLY the rewritten post — no "Here is the rewritten version:", no explanations
+- For multiple platforms use ---PLATFORM_NAME--- separator exactly as specified`;
+    } else {
+      // caption mode
+      const platformSection =
+        platforms.length > 0
+          ? `\n\nTarget platforms: ${platforms.join(", ")}.\n${
+              platforms.length > 1
+                ? `Generate separate content for EACH platform using this exact separator format:\n---PLATFORM_NAME---\n[content]\n\nPlatform-specific requirements:\n${platforms.map((p: string) => `• ${p}: ${PLATFORM_PROMPTS[p] || p}`).join("\n")}`
+                : `Platform requirement: ${PLATFORM_PROMPTS[platforms[0]] || ""}`
+            }`
+          : "";
+
+      systemPrompt = `You are an expert social media strategist, copywriter, and SEO specialist with deep knowledge of each platform's algorithm and audience behavior.
 
 TONE: ${tone} — ${toneGuide[tone] || tone}
 
-TASK: Generate ${typeDesc}.${platformSection}
+TASK: Generate engaging social media captions.${platformSection}
 
 UNIVERSAL RULES (non-negotiable):
 - Output ONLY the post content — zero meta-commentary, no "Here's your post:", no explanations
@@ -224,6 +286,7 @@ UNIVERSAL RULES (non-negotiable):
 - Every sentence must carry information, emotion, or drive action — cut anything that doesn't
 - Use specific numbers, names, and outcomes over vague claims
 - Apply the selected tone consistently throughout all output`;
+    }
 
     const messages = [
       new SystemMessage(systemPrompt),
