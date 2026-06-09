@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Sparkles,
@@ -762,7 +762,7 @@ function formatRelativeTime(ts: number): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-export default function AIStudioPage() {
+function AIStudioContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { resetPost, setPostContent, togglePlatform } = usePostStore();
@@ -1721,5 +1721,13 @@ export default function AIStudioPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function AIStudioPage() {
+  return (
+    <Suspense>
+      <AIStudioContent />
+    </Suspense>
   );
 }
