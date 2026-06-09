@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   RefreshCw,
   Clock,
@@ -12,9 +13,17 @@ import {
   MessageCircle,
   Share2,
   MoreHorizontal,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  CalendarClock,
+  X,
+  Undo2,
+  Redo2,
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { usePostStore } from "@/store/usePostStore";
+import { DateTimePicker } from "@/components/ui/DateTimePicker";
 
 const PLATFORMS = [
   {
@@ -58,26 +67,32 @@ const AI_ACTIONS = [
     key: "hook",
     label: "Generate hook",
     hint: "Open with a sharp first line",
-    insert: "Most schedulers wait. Ours doesn't.\n\n",
+    type: "caption",
+    suffix:
+      "Write ONLY a compelling opening hook (1-2 lines max). No intro, no explanation.",
   },
   {
-    key: "caption",
+    key: "continue",
     label: "Continue writing",
     hint: "Extend the current paragraph",
-    insert:
-      "\n\nThe quiet shift in publishing isn't AI — it's how invisible the tools have become.",
+    type: "caption",
+    suffix:
+      "Continue writing from where this ends. Match the existing style and voice. Output only the continuation.",
   },
   {
     key: "hashtags",
     label: "Suggest hashtags",
-    hint: "4-6 relevant tags",
-    insert: "\n\n#scheduling #saas #devtools #buildinpublic",
+    hint: "Platform-relevant tags with rationale",
+    type: "hashtag",
+    suffix: "",
   },
   {
     key: "cta",
     label: "Add call-to-action",
     hint: "Drive a click",
-    insert: "\n\nTry it free — link in bio.",
+    type: "caption",
+    suffix:
+      "Write ONLY a short call-to-action line (max 1 line). No intro, no explanation.",
   },
 ];
 
@@ -129,10 +144,30 @@ const STORE_TO_COMPOSER: Record<string, string> = {
   YOUTUBE: "yt",
 };
 
+function defaultScheduleDate(): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(10, 0, 0, 0);
+  return d;
+}
+
+function formatScheduleLabel(d: Date): string {
+  return d.toLocaleString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
 export default function ComposerPage() {
+  const router = useRouter();
   const {
     currentPost,
     selectedPlatforms: storePlatforms,
+    editingPostId,
     resetPost,
   } = usePostStore();
 
@@ -157,6 +192,40 @@ export default function ComposerPage() {
   const [slashOpen, setSlashOpen] = useState(false);
   const [activePreview, setActivePreview] = useState("x");
   const [mobileTab, setMobileTab] = useState<"editor" | "preview">("editor");
+
+  // Scheduling state
+  const [scheduledDate, setScheduledDate] = useState<Date>(defaultScheduleDate);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Media state
+  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // AI suggestions state
+  const [suggestions, setSuggestions] = useState<
+    { platform: string; content: string }[]
+  >([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const [suggestionsError, setSuggestionsError] = useState<string | null>(null);
+  const [suggestionsType, setSuggestionsType] = useState<
+    "caption" | "hashtag" | null
+  >(null);
+  const [suggestionsActionKey, setSuggestionsActionKey] = useState<
+    string | null
+  >(null);
+
+  // Undo/Redo history
+  const historyRef = useRef<string[]>([currentPost || SAMPLE]);
+  const historyIndexRef = useRef(0);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   // Clear store after reading so next fresh visit starts blank
@@ -165,16 +234,294 @@ export default function ComposerPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Derive platform IDs for API (reverse map composer IDs → store IDs)
+  const COMPOSER_TO_STORE: Record<string, string> = {
+    x: "TWITTER",
+    in: "LINKEDIN",
+    ig: "INSTAGRAM",
+    yt: "YOUTUBE",
+  };
+
+  const activePlatformIds = Object.entries(selected)
+    .filter(([, on]) => on)
+    .map(([id]) => COMPOSER_TO_STORE[id])
+    .filter(Boolean);
+
+  const handleSchedule = async () => {
+    if (!text.trim() || saving) return;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const method = editingPostId ? "PUT" : "POST";
+      const body = {
+        ...(editingPostId ? { id: editingPostId } : {}),
+        content: text,
+        mediaUrls,
+        scheduledDate: scheduledDate.toISOString(),
+        platforms: activePlatformIds,
+      };
+      const res = await fetch("/api/posts", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to schedule");
+      }
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess(false);
+        router.push("/calendar");
+      }, 1200);
+    } catch (err) {
+      setSaveError(
+        err instanceof Error ? err.message : "Failed to schedule post",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePublishNow = async () => {
+    if (!text.trim() || saving) return;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: text,
+          mediaUrls,
+          scheduledDate: new Date().toISOString(),
+          platforms: activePlatformIds,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to publish");
+      }
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess(false);
+        router.push("/calendar");
+      }, 1200);
+    } catch (err) {
+      setSaveError(
+        err instanceof Error ? err.message : "Failed to publish post",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleMediaClick = () => fileInputRef.current?.click();
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    if (mediaUrls.length + files.length > 4) {
+      setUploadError("Max 4 media attachments");
+      return;
+    }
+    setUploading(true);
+    setUploadError(null);
+    try {
+      for (const file of files) {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch("/api/upload", { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Upload failed");
+        setMediaUrls((prev) => [...prev, data.url]);
+      }
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const PLATFORM_LABELS: Record<string, string> = {
+    TWITTER: "X / Twitter",
+    LINKEDIN: "LinkedIn",
+    INSTAGRAM: "Instagram",
+    YOUTUBE: "YouTube",
+  };
+
+  function cleanContent(content: string, type: "caption" | "hashtag"): string {
+    if (type === "hashtag") {
+      // Extract only #hashtag tokens — strip " — explanation" from each line
+      return content
+        .split("\n")
+        .map((line) => line.split(/\s*[—–-]{1,2}\s/)[0].trim())
+        .filter((line) => line.startsWith("#"))
+        .join(" ");
+    }
+    // Captions: strip common AI meta-commentary preamble/postamble
+    return content
+      .replace(/^(here'?s?( is)?|this (is|would be)|below is)[^\n]*\n+/i, "")
+      .replace(/\n+(let me know[^\n]*)$/i, "")
+      .trim();
+  }
+
+  function parsePlatformContent(
+    raw: string,
+    platforms: string[],
+  ): { platform: string; content: string }[] {
+    if (platforms.length <= 1) {
+      return [{ platform: platforms[0] || "", content: raw.trim() }];
+    }
+    const results: { platform: string; content: string }[] = [];
+    for (let i = 0; i < platforms.length; i++) {
+      const sep = `---${platforms[i]}---`;
+      const idx = raw.indexOf(sep);
+      if (idx === -1) continue;
+      const start = idx + sep.length;
+      const nextIdx =
+        platforms
+          .slice(i + 1)
+          .map((p) => raw.indexOf(`---${p}---`, start))
+          .filter((n) => n !== -1)
+          .sort((a, b) => a - b)[0] ?? raw.length;
+      results.push({
+        platform: platforms[i],
+        content: raw.slice(start, nextIdx).trim(),
+      });
+    }
+    return results.length > 0
+      ? results
+      : [{ platform: "", content: raw.trim() }];
+  }
+
+  const generateSuggestions = async (
+    type: "caption" | "hashtag",
+    promptSuffix?: string,
+    actionKey?: string,
+  ) => {
+    setSuggestionsLoading(true);
+    setSuggestionsError(null);
+    setSuggestions([]);
+    setSuggestionsType(type);
+    setSuggestionsActionKey(actionKey || null);
+    setSlashOpen(false);
+
+    const baseText = text.replace(/\/$/, "");
+    const prompt = promptSuffix
+      ? `${baseText}\n\n---\nInstruction: ${promptSuffix}`
+      : baseText;
+    const platforms =
+      activePlatformIds.length > 0 ? activePlatformIds : ["TWITTER"];
+
+    try {
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, type, tone, platforms }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(
+          (err as { error?: string }).error || "AI generation failed",
+        );
+      }
+
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        fullText += decoder.decode(value, { stream: true });
+      }
+
+      setSuggestions(
+        parsePlatformContent(fullText, platforms).map((s) => ({
+          ...s,
+          content: cleanContent(s.content, type),
+        })),
+      );
+    } catch (err) {
+      setSuggestionsError(
+        err instanceof Error ? err.message : "Generation failed",
+      );
+    } finally {
+      setSuggestionsLoading(false);
+    }
+  };
+
+  const applySuggestion = (content: string) => {
+    const base = text.replace(/\/$/, "").trimEnd();
+    // hook → prepend; everything else (hashtags, cta, continue) → append
+    const newText =
+      suggestionsActionKey === "hook"
+        ? content + "\n\n" + base
+        : base + "\n\n" + content;
+    pushToHistory(newText);
+    setText(newText);
+    setSuggestions([]);
+    setSuggestionsType(null);
+    setSuggestionsActionKey(null);
+    taRef.current?.focus();
+  };
+
+  const handleHashtagClick = () =>
+    generateSuggestions("hashtag", undefined, "hashtags");
+
+  const syncHistoryState = () => {
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(historyIndexRef.current < historyRef.current.length - 1);
+  };
+
+  const pushToHistory = (value: string) => {
+    const trimmed = historyRef.current.slice(0, historyIndexRef.current + 1);
+    trimmed.push(value);
+    historyRef.current = trimmed;
+    historyIndexRef.current = trimmed.length - 1;
+    syncHistoryState();
+  };
+
+  const handleUndo = () => {
+    if (historyIndexRef.current > 0) {
+      historyIndexRef.current--;
+      setText(historyRef.current[historyIndexRef.current]);
+      syncHistoryState();
+    }
+  };
+
+  const handleRedo = () => {
+    if (historyIndexRef.current < historyRef.current.length - 1) {
+      historyIndexRef.current++;
+      setText(historyRef.current[historyIndexRef.current]);
+      syncHistoryState();
+    }
+  };
+
+  const handleAIClick = () => {
+    setText((t) => (t.endsWith("/") ? t : t + "/"));
+    setSlashOpen(true);
+    setTimeout(() => taRef.current?.focus(), 50);
+  };
+
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const v = e.target.value;
     setText(v);
     setSlashOpen(v.endsWith("/"));
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => pushToHistory(v), 600);
   };
 
-  const insertAI = (insert: string) => {
-    setText((t) => t.replace(/\/$/, "") + insert);
-    setSlashOpen(false);
-    taRef.current?.focus();
+  const insertAI = (key: string) => {
+    const action = AI_ACTIONS.find((a) => a.key === key);
+    if (!action) return;
+    generateSuggestions(
+      action.type as "caption" | "hashtag",
+      action.suffix || undefined,
+      key,
+    );
   };
 
   const activePlatforms = PLATFORMS.filter((p) => selected[p.id]);
@@ -195,14 +542,86 @@ export default function ComposerPage() {
         title="Compose"
         actions={
           <>
-            <button className="sp-btn sp-btn-ghost">
+            {saveError && (
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  fontSize: 12,
+                  color: "var(--sp-warn)",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                <AlertCircle style={{ width: 12, height: 12 }} />
+                {saveError}
+              </span>
+            )}
+            {saveSuccess && (
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  fontSize: 12,
+                  color: "var(--sp-positive)",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                <CheckCircle2 style={{ width: 12, height: 12 }} />
+                Saved!
+              </span>
+            )}
+            <button className="sp-btn sp-btn-ghost" disabled={saving}>
               <RefreshCw style={{ width: 13, height: 13 }} /> Save draft
             </button>
-            <button className="sp-btn">
-              <Clock style={{ width: 13, height: 13 }} /> Schedule
+            <button
+              className="sp-btn"
+              onClick={handleSchedule}
+              disabled={saving || !text.trim()}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                opacity: saving || !text.trim() ? 0.5 : 1,
+              }}
+            >
+              {saving ? (
+                <Loader2
+                  style={{
+                    width: 13,
+                    height: 13,
+                    animation: "spin 1s linear infinite",
+                  }}
+                />
+              ) : (
+                <Clock style={{ width: 13, height: 13 }} />
+              )}
+              Schedule
             </button>
-            <button className="sp-btn sp-btn-primary">
-              <Send style={{ width: 13, height: 13 }} /> Publish now
+            <button
+              className="sp-btn sp-btn-primary"
+              onClick={handlePublishNow}
+              disabled={saving || !text.trim()}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                opacity: saving || !text.trim() ? 0.5 : 1,
+              }}
+            >
+              {saving ? (
+                <Loader2
+                  style={{
+                    width: 13,
+                    height: 13,
+                    animation: "spin 1s linear infinite",
+                  }}
+                />
+              ) : (
+                <Send style={{ width: 13, height: 13 }} />
+              )}
+              Publish now
             </button>
           </>
         }
@@ -385,15 +804,17 @@ export default function ComposerPage() {
                 {AI_ACTIONS.map((it) => (
                   <div
                     key={it.key}
-                    onClick={() => insertAI(it.insert)}
+                    onClick={() => !suggestionsLoading && insertAI(it.key)}
                     style={{
                       padding: "8px 10px",
                       borderRadius: 6,
-                      cursor: "pointer",
+                      cursor: suggestionsLoading ? "not-allowed" : "pointer",
+                      opacity: suggestionsLoading ? 0.5 : 1,
                     }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = "var(--paper-2)")
-                    }
+                    onMouseEnter={(e) => {
+                      if (!suggestionsLoading)
+                        e.currentTarget.style.background = "var(--paper-2)";
+                    }}
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.background = "transparent")
                     }
@@ -410,6 +831,280 @@ export default function ComposerPage() {
             )}
           </div>
 
+          {/* AI Suggestions panel */}
+          {(suggestionsLoading ||
+            suggestions.length > 0 ||
+            suggestionsError) && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {/* Header */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <Sparkles
+                    style={{ width: 12, height: 12, color: "var(--ink-3)" }}
+                  />
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontFamily: "var(--font-mono)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      color: "var(--ink-3)",
+                    }}
+                  >
+                    {suggestionsLoading
+                      ? "Generating…"
+                      : suggestionsType === "hashtag"
+                        ? "Hashtag suggestions"
+                        : "AI suggestions"}
+                  </span>
+                </div>
+                {!suggestionsLoading && (
+                  <button
+                    onClick={() => {
+                      setSuggestions([]);
+                      setSuggestionsError(null);
+                      setSuggestionsType(null);
+                    }}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "var(--ink-3)",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: 2,
+                    }}
+                  >
+                    <X style={{ width: 12, height: 12 }} />
+                  </button>
+                )}
+              </div>
+
+              {suggestionsLoading && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "12px 14px",
+                    borderRadius: 8,
+                    border: "1px solid var(--rule)",
+                    background: "var(--paper-2)",
+                  }}
+                >
+                  <Loader2
+                    style={{
+                      width: 14,
+                      height: 14,
+                      color: "var(--ink-3)",
+                      animation: "spin 1s linear infinite",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: 12,
+                      color: "var(--ink-3)",
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
+                    Thinking…
+                  </span>
+                </div>
+              )}
+
+              {suggestionsError && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    border: "1px solid var(--rule)",
+                    background: "var(--paper-2)",
+                    fontSize: 12,
+                    color: "var(--sp-warn)",
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  <AlertCircle
+                    style={{ width: 12, height: 12, flexShrink: 0 }}
+                  />{" "}
+                  {suggestionsError}
+                </div>
+              )}
+
+              {/* Suggestion cards */}
+              {suggestions.map((s, i) => (
+                <div
+                  key={i}
+                  className="sp-card"
+                  style={{
+                    padding: "12px 14px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                  }}
+                >
+                  {s.platform && (
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 6 }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 10.5,
+                          fontFamily: "var(--font-mono)",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.06em",
+                          color: "var(--ink-3)",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {PLATFORM_LABELS[s.platform] || s.platform}
+                      </span>
+                    </div>
+                  )}
+                  <pre
+                    style={{
+                      fontSize: 12.5,
+                      lineHeight: 1.55,
+                      whiteSpace: "pre-wrap",
+                      fontFamily: "var(--font-display)",
+                      margin: 0,
+                      color: "var(--ink)",
+                    }}
+                  >
+                    {s.content}
+                  </pre>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button
+                      className="sp-btn sp-btn-primary"
+                      onClick={() => applySuggestion(s.content)}
+                      style={{ fontSize: 11.5 }}
+                    >
+                      Apply
+                    </button>
+                    <button
+                      className="sp-btn sp-btn-ghost"
+                      onClick={() =>
+                        setSuggestions((prev) =>
+                          prev.filter((_, idx) => idx !== i),
+                        )
+                      }
+                      style={{ fontSize: 11.5 }}
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Media thumbnails */}
+          {(mediaUrls.length > 0 || uploading || uploadError) && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {uploadError && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontSize: 11,
+                    color: "var(--sp-warn)",
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  <AlertCircle style={{ width: 11, height: 11 }} />{" "}
+                  {uploadError}
+                </div>
+              )}
+              {mediaUrls.length > 0 && (
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {mediaUrls.map((url, i) => (
+                    <div
+                      key={url}
+                      style={{
+                        position: "relative",
+                        width: 72,
+                        height: 72,
+                        borderRadius: 6,
+                        overflow: "hidden",
+                        border: "1px solid var(--rule)",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt={`media ${i}`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                      <button
+                        onClick={() =>
+                          setMediaUrls((prev) =>
+                            prev.filter((_, idx) => idx !== i),
+                          )
+                        }
+                        style={{
+                          position: "absolute",
+                          top: 3,
+                          right: 3,
+                          width: 18,
+                          height: 18,
+                          borderRadius: "50%",
+                          background: "rgba(0,0,0,0.6)",
+                          border: "none",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#fff",
+                          padding: 0,
+                        }}
+                      >
+                        <X style={{ width: 10, height: 10 }} />
+                      </button>
+                    </div>
+                  ))}
+                  {uploading && (
+                    <div
+                      style={{
+                        width: 72,
+                        height: 72,
+                        borderRadius: 6,
+                        border: "1px dashed var(--rule)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Loader2
+                        style={{
+                          width: 18,
+                          height: 18,
+                          color: "var(--ink-3)",
+                          animation: "spin 1s linear infinite",
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Footer toolbar */}
           <div
             style={{
@@ -421,14 +1116,109 @@ export default function ComposerPage() {
             }}
           >
             <div style={{ display: "flex", gap: 4 }}>
-              <button className="sp-btn sp-btn-ghost">
-                <ImageIcon style={{ width: 13, height: 13 }} /> Media
+              {/* Undo / Redo */}
+              <button
+                className="sp-btn sp-btn-ghost"
+                onClick={handleUndo}
+                disabled={!canUndo}
+                title="Undo"
+                style={{
+                  opacity: canUndo ? 1 : 0.35,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                }}
+              >
+                <Undo2 style={{ width: 13, height: 13 }} />
               </button>
-              <button className="sp-btn sp-btn-ghost">
+              <button
+                className="sp-btn sp-btn-ghost"
+                onClick={handleRedo}
+                disabled={!canRedo}
+                title="Redo"
+                style={{
+                  opacity: canRedo ? 1 : 0.35,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                }}
+              >
+                <Redo2 style={{ width: 13, height: 13 }} />
+              </button>
+
+              <div
+                style={{ width: 1, background: "var(--rule)", margin: "0 2px" }}
+              />
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <button
+                className="sp-btn sp-btn-ghost"
+                onClick={handleMediaClick}
+                disabled={uploading || mediaUrls.length >= 4}
+                style={{
+                  opacity: mediaUrls.length >= 4 ? 0.4 : 1,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                {uploading ? (
+                  <Loader2
+                    style={{
+                      width: 13,
+                      height: 13,
+                      animation: "spin 1s linear infinite",
+                    }}
+                  />
+                ) : (
+                  <ImageIcon style={{ width: 13, height: 13 }} />
+                )}
+                Media {mediaUrls.length > 0 ? `(${mediaUrls.length}/4)` : ""}
+              </button>
+              <button
+                className="sp-btn sp-btn-ghost"
+                onClick={handleHashtagClick}
+                disabled={suggestionsLoading}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  opacity: suggestionsLoading ? 0.5 : 1,
+                }}
+              >
                 <Hash style={{ width: 13, height: 13 }} /> Hashtag
               </button>
-              <button className="sp-btn sp-btn-ghost">
-                <Sparkles style={{ width: 13, height: 13 }} /> AI
+              <button
+                className="sp-btn sp-btn-ghost"
+                onClick={handleAIClick}
+                disabled={suggestionsLoading}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  opacity: suggestionsLoading ? 0.5 : 1,
+                }}
+              >
+                {suggestionsLoading ? (
+                  <Loader2
+                    style={{
+                      width: 13,
+                      height: 13,
+                      animation: "spin 1s linear infinite",
+                    }}
+                  />
+                ) : (
+                  <Sparkles style={{ width: 13, height: 13 }} />
+                )}
+                AI
               </button>
             </div>
             <div
@@ -446,25 +1236,53 @@ export default function ComposerPage() {
           <div
             className="sp-card"
             style={{
+              position: "relative",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              gap: "var(--gap-2)",
               padding: "var(--pad-1) var(--pad-2)",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <Clock style={{ width: 16, height: 16, color: "var(--ink-3)" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <CalendarClock
+                style={{
+                  width: 16,
+                  height: 16,
+                  color: "var(--ink-3)",
+                  flexShrink: 0,
+                }}
+              />
               <div>
                 <div style={{ fontSize: 12.5, fontWeight: 500 }}>
-                  Schedule for Thursday, May 9 · 10:00 AM
+                  {formatScheduleLabel(scheduledDate)}
                 </div>
                 <div style={{ fontSize: 11, color: "var(--ink-3)" }}>
-                  Suggested — your audience peaks here
+                  Scheduled publish time
                 </div>
               </div>
             </div>
-            <button className="sp-btn">Change time</button>
+            <button
+              className="sp-btn"
+              onClick={() => setShowDatePicker((v) => !v)}
+            >
+              {showDatePicker ? "Done" : "Change time"}
+            </button>
+            {showDatePicker && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "calc(100% + 6px)",
+                  right: 0,
+                  zIndex: 50,
+                }}
+              >
+                <DateTimePicker
+                  value={scheduledDate}
+                  min={new Date()}
+                  onChange={(d) => setScheduledDate(d)}
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -693,6 +1511,11 @@ export default function ComposerPage() {
       </div>
 
       <style jsx>{`
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
         @media (max-width: 1023px) {
           .composer-layout {
             grid-template-columns: 1fr !important;

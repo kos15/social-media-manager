@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Sparkles,
   Wand2,
@@ -764,13 +764,19 @@ function formatRelativeTime(ts: number): string {
 
 export default function AIStudioPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { resetPost, setPostContent, togglePlatform } = usePostStore();
 
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState("");
   const [genError, setGenError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabId>("caption");
+  const initialTab = (searchParams.get("tab") as TabId) || "caption";
+  const [activeTab, setActiveTab] = useState<TabId>(
+    ["caption", "hashtag", "repurpose"].includes(initialTab)
+      ? initialTab
+      : "caption",
+  );
   const [tone, setTone] = useState("Confident");
   const [copied, setCopied] = useState(false);
   const [mobileTab, setMobileTab] = useState<"input" | "output">("input");
