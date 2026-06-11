@@ -39,7 +39,7 @@ const libraryItems = [
     icon: Sparkles,
     badge: null,
   },
-  { id: "media", label: "Media", href: "#", icon: Image, badge: null },
+  { id: "media", label: "Media", href: "/media", icon: Image, badge: null },
 ];
 
 const systemItems = [

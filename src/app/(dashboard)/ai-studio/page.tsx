@@ -1015,11 +1015,10 @@ function AIStudioContent() {
       >
         {/* ── LEFT: Input panel ─────────────────────────────────── */}
         <div
-          className={mobileTab === "input" ? "block" : "hidden md:flex"}
+          className={mobileTab === "input" ? "flex" : "hidden md:flex"}
           style={{
             padding: "var(--pad-3) var(--pad-4)",
             overflow: "auto",
-            display: "flex",
             flexDirection: "column",
             gap: "var(--gap-3)",
             borderRight: "1px solid var(--rule)",
@@ -1415,10 +1414,9 @@ function AIStudioContent() {
         {/* ── RIGHT: Output panel ───────────────────────────────── */}
         <div
           ref={resultRef}
-          className={mobileTab === "output" ? "block" : "hidden md:flex"}
+          className={mobileTab === "output" ? "flex" : "hidden md:flex"}
           style={{
             background: "var(--paper-2)",
-            display: "flex",
             flexDirection: "column",
             overflow: "hidden",
           }}

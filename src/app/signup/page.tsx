@@ -139,7 +139,6 @@ export default function SignupPage() {
           flexShrink: 0,
           borderRight: "1px solid var(--rule)",
           padding: "48px 56px",
-          display: "flex",
           flexDirection: "column",
           background: "var(--paper-2)",
         }}
