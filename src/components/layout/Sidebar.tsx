@@ -14,6 +14,7 @@ import {
   Settings,
   ShieldCheck,
   LogOut,
+  FileText,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -37,6 +38,13 @@ const libraryItems = [
     label: "AI Studio",
     href: "/ai-studio",
     icon: Sparkles,
+    badge: null,
+  },
+  {
+    id: "drafts",
+    label: "Drafts",
+    href: "/drafts",
+    icon: FileText,
     badge: null,
   },
   { id: "media", label: "Media", href: "/media", icon: Image, badge: null },
@@ -89,6 +97,7 @@ export function Sidebar() {
       >
         <Link
           href="/"
+          className="sp-brand"
           style={{
             display: "flex",
             alignItems: "center",
@@ -97,10 +106,11 @@ export function Sidebar() {
           }}
         >
           <span
+            className="sp-brand-logo"
             style={{
               width: 28,
               height: 28,
-              borderRadius: 6,
+              borderRadius: 8,
               background: "var(--ink)",
               color: "var(--paper)",
               display: "flex",

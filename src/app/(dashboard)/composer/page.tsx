@@ -283,6 +283,41 @@ export default function ComposerPage() {
     }
   };
 
+  const handleSaveDraft = async () => {
+    if (!text.trim() || saving) return;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const method = editingPostId ? "PUT" : "POST";
+      const body = {
+        ...(editingPostId ? { id: editingPostId } : {}),
+        content: text,
+        mediaUrls,
+        scheduledDate: scheduledDate.toISOString(),
+        platforms: activePlatformIds,
+        status: "DRAFT",
+      };
+      const res = await fetch("/api/posts", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to save draft");
+      }
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess(false);
+        router.push("/drafts");
+      }, 1200);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Failed to save draft");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handlePublishNow = async () => {
     if (!text.trim() || saving) return;
     setSaving(true);
@@ -572,7 +607,12 @@ export default function ComposerPage() {
                 Saved!
               </span>
             )}
-            <button className="sp-btn sp-btn-ghost" disabled={saving}>
+            <button
+              className="sp-btn sp-btn-ghost"
+              onClick={handleSaveDraft}
+              disabled={saving || !text.trim()}
+              style={{ opacity: saving || !text.trim() ? 0.5 : 1 }}
+            >
               <RefreshCw style={{ width: 13, height: 13 }} /> Save draft
             </button>
             <button
@@ -766,7 +806,11 @@ export default function ComposerPage() {
                 letterSpacing: "-0.01em",
                 color: "var(--ink)",
                 background: "transparent",
-                border: "none",
+                borderRadius: 12,
+                padding: 20,
+                textAlign: "left",
+                border: "1px solid rgba(255, 255, 255, 1)",
+                boxShadow: "0px 4px 12px 0px rgba(0, 0, 0, 0.15)",
                 outline: "none",
                 minHeight: 280,
               }}

@@ -8,6 +8,8 @@ const PROTECTED_PATHS = [
   "/ai-studio",
   "/analytics",
   "/accounts",
+  "/drafts",
+  "/media",
   "/settings",
   "/admin",
 ];

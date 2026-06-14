@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -13,8 +13,10 @@ import {
   Link2,
   Settings,
   Image,
-  X,
+  FileText,
+  LogOut,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 const dockItems = [
   {
@@ -31,15 +33,23 @@ const dockItems = [
 const moreItems = [
   { id: "analytics", label: "Analytics", href: "/analytics", icon: BarChart2 },
   { id: "accounts", label: "Accounts", href: "/accounts", icon: Link2 },
+  { id: "drafts", label: "Drafts", href: "/drafts", icon: FileText },
   { id: "media", label: "Media", href: "/media", icon: Image },
   { id: "settings", label: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function BottomDock() {
   const pathname = usePathname();
+  const router = useRouter();
   const [showMore, setShowMore] = useState(false);
   const isActive = (href: string) => pathname.startsWith(href);
   const moreActive = moreItems.some((i) => isActive(i.href));
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
 
   return (
     <>
@@ -65,6 +75,7 @@ export function BottomDock() {
               key={item.id}
               href={item.href}
               onClick={() => setShowMore(false)}
+              className="sp-tab-press"
               style={{
                 flex: 1,
                 display: "flex",
@@ -74,7 +85,6 @@ export function BottomDock() {
                 gap: 4,
                 textDecoration: "none",
                 color: active ? "var(--ink)" : "var(--ink-3)",
-                transition: "color 0.15s",
                 position: "relative",
               }}
             >
@@ -105,7 +115,7 @@ export function BottomDock() {
                     width: 20,
                     height: 2,
                     borderRadius: "2px 2px 0 0",
-                    background: "var(--ink)",
+                    background: "var(--sp-accent)",
                   }}
                 />
               )}
@@ -116,6 +126,7 @@ export function BottomDock() {
         {/* More button */}
         <button
           onClick={() => setShowMore((s) => !s)}
+          className="sp-tab-press"
           style={{
             flex: 1,
             display: "flex",
@@ -153,118 +164,52 @@ export function BottomDock() {
                 width: 20,
                 height: 2,
                 borderRadius: "2px 2px 0 0",
-                background: "var(--ink)",
+                background: "var(--sp-accent)",
               }}
             />
           )}
         </button>
       </nav>
 
-      {/* More drawer */}
-      {showMore && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="lg:hidden"
-            onClick={() => setShowMore(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 48,
-              background: "rgba(0,0,0,0.3)",
-            }}
-          />
-          {/* Sheet */}
-          <div
-            className="lg:hidden"
-            style={{
-              position: "fixed",
-              bottom: 64,
-              left: 0,
-              right: 0,
-              zIndex: 49,
-              background: "var(--paper)",
-              borderTop: "1px solid var(--rule)",
-              borderRadius: "12px 12px 0 0",
-              padding: "8px 0 12px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "8px 20px 12px",
-                borderBottom: "1px solid var(--rule)",
-              }}
+      {/* More sheet — floating rounded card, springs up from the bottom */}
+      <div
+        className={`lg:hidden v2-sheet-veil ${showMore ? "open" : ""}`}
+        onClick={() => setShowMore(false)}
+      />
+      <div className={`lg:hidden v2-sheet ${showMore ? "open" : ""}`}>
+        <div className="grab" />
+        {moreItems.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={item.id}
+              href={item.href}
+              onClick={() => setShowMore(false)}
+              className={`row ${active ? "active" : ""}`}
             >
-              <span
+              <item.icon
                 style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 10,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.12em",
-                  color: "var(--ink-3)",
+                  width: 17,
+                  height: 17,
+                  strokeWidth: active ? 2 : 1.5,
+                  flexShrink: 0,
                 }}
-              >
-                More
-              </span>
-              <button
-                onClick={() => setShowMore(false)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "var(--ink-3)",
-                  cursor: "pointer",
-                  padding: 4,
-                  display: "flex",
-                }}
-              >
-                <X style={{ width: 16, height: 16 }} />
-              </button>
-            </div>
-            {moreItems.map((item) => {
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  onClick={() => setShowMore(false)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 14,
-                    padding: "14px 20px",
-                    textDecoration: "none",
-                    color: active ? "var(--ink)" : "var(--ink-2)",
-                    background: active ? "var(--paper-2)" : "transparent",
-                    borderLeft: active
-                      ? "2px solid var(--ink)"
-                      : "2px solid transparent",
-                  }}
-                >
-                  <item.icon
-                    style={{
-                      width: 18,
-                      height: 18,
-                      strokeWidth: active ? 2 : 1.5,
-                      flexShrink: 0,
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: 15,
-                      fontWeight: active ? 500 : 400,
-                    }}
-                  >
-                    {item.label}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </>
-      )}
+              />
+              {item.label}
+              {active && <span className="dot" />}
+            </Link>
+          );
+        })}
+        <div className="rule" />
+        <button
+          className="row"
+          onClick={handleSignOut}
+          style={{ color: "var(--sp-danger)" }}
+        >
+          <LogOut style={{ width: 17, height: 17, flexShrink: 0 }} />
+          Sign out
+        </button>
+      </div>
     </>
   );
 }

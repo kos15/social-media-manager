@@ -33,6 +33,8 @@ function toFrontendPost(p: {
   mediaUrls: string[];
   scheduledFor: Date | null;
   platformIds: string[];
+  status?: string;
+  updatedAt?: Date;
 }) {
   return {
     id: p.id,
@@ -40,8 +42,20 @@ function toFrontendPost(p: {
     mediaUrls: p.mediaUrls,
     scheduledDate: (p.scheduledFor ?? new Date()).toISOString(),
     platforms: p.platformIds,
+    ...(p.status ? { status: p.status } : {}),
+    ...(p.updatedAt ? { updatedAt: p.updatedAt.toISOString() } : {}),
   };
 }
+
+const STATUS_FILTERS: Record<
+  string,
+  ("DRAFT" | "SCHEDULED" | "PUBLISHED" | "FAILED")[]
+> = {
+  DRAFT: ["DRAFT"],
+  SCHEDULED: ["SCHEDULED"],
+  PUBLISHED: ["PUBLISHED"],
+  FAILED: ["FAILED"],
+};
 
 // ── GET /api/posts ─────────────────────────────────────────────────
 export async function GET(request: NextRequest) {
@@ -52,12 +66,20 @@ export async function GET(request: NextRequest) {
   try {
     const userId = await ensurePrismaUser(user);
 
+    const statusParam = new URL(request.url).searchParams.get("status");
+    const statuses =
+      (statusParam && STATUS_FILTERS[statusParam.toUpperCase()]) ||
+      (["SCHEDULED", "PUBLISHED"] as const);
+
     const posts = await prisma.post.findMany({
       where: {
         userId,
-        status: { in: ["SCHEDULED", "PUBLISHED"] },
+        status: { in: [...statuses] },
       },
-      orderBy: { scheduledFor: "asc" },
+      orderBy:
+        statuses.length === 1 && statuses[0] === "DRAFT"
+          ? { updatedAt: "desc" }
+          : { scheduledFor: "asc" },
       select: {
         id: true,
         content: true,
@@ -65,6 +87,7 @@ export async function GET(request: NextRequest) {
         scheduledFor: true,
         platformIds: true,
         status: true,
+        updatedAt: true,
       },
     });
 
@@ -87,7 +110,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     console.log("[DEBUG /api/posts] Incoming request body:", body);
-    const { content, mediaUrls = [], scheduledDate, platforms = [] } = body;
+    const {
+      content,
+      mediaUrls = [],
+      scheduledDate,
+      platforms = [],
+      status,
+    } = body;
 
     if (!content?.trim()) {
       return NextResponse.json(
@@ -105,7 +134,7 @@ export async function POST(request: NextRequest) {
         mediaUrls,
         scheduledFor: scheduledDate ? new Date(scheduledDate) : new Date(),
         platformIds: platforms,
-        status: "SCHEDULED",
+        status: status === "DRAFT" ? "DRAFT" : "SCHEDULED",
       },
     });
 
@@ -127,7 +156,14 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { id, content, mediaUrls = [], scheduledDate, platforms = [] } = body;
+    const {
+      id,
+      content,
+      mediaUrls = [],
+      scheduledDate,
+      platforms = [],
+      status,
+    } = body;
 
     if (!id)
       return NextResponse.json({ error: "Post ID required" }, { status: 400 });
@@ -141,13 +177,13 @@ export async function PUT(request: NextRequest) {
     const post = await prisma.post.update({
       where: { id },
       data: {
-        content,
-        mediaUrls,
+        content: content ?? existing.content,
+        mediaUrls: content !== undefined ? mediaUrls : existing.mediaUrls,
         scheduledFor: scheduledDate
           ? new Date(scheduledDate)
           : existing.scheduledFor,
-        platformIds: platforms,
-        status: "SCHEDULED",
+        platformIds: content !== undefined ? platforms : existing.platformIds,
+        status: status === "DRAFT" ? "DRAFT" : "SCHEDULED",
       },
     });
 
