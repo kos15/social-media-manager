@@ -1,10 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
+
+const ERROR_MESSAGES: Record<string, string> = {
+  google_denied: "Google sign-in was cancelled.",
+  google_not_configured: "Google sign-in is not configured.",
+  google_token_failed: "Failed to complete Google sign-in. Try again.",
+  google_no_email: "No email returned from Google.",
+  session_create_failed: "Failed to create session. Try again.",
+  google_auth_failed: "Google sign-in failed. Try again.",
+  invalid_state: "Invalid auth state. Try again.",
+  oauth_error: "OAuth error. Try again.",
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,6 +25,12 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get("error");
+    if (err) setError(ERROR_MESSAGES[err] ?? "An error occurred. Try again.");
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,20 +50,9 @@ export default function LoginPage() {
     router.refresh();
   };
 
-  const handleGoogleLogin = async () => {
-    setError("");
+  const handleGoogleLogin = () => {
     setGoogleLoading(true);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      setError(error.message);
-      setGoogleLoading(false);
-    }
+    window.location.href = "/api/auth/google";
   };
 
   return (

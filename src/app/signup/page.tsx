@@ -15,20 +15,9 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  const handleGoogleSignup = async () => {
-    setError("");
+  const handleGoogleSignup = () => {
     setGoogleLoading(true);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      setError(error.message);
-      setGoogleLoading(false);
-    }
+    window.location.href = "/api/auth/google";
   };
 
   const handleSignup = async (e: React.FormEvent) => {
